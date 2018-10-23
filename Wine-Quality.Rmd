@@ -1,0 +1,173 @@
+---
+title: "Wine-Quality"
+output: word_document
+---
+```{r echo=FALSE}
+# Libraries
+library(tidyr)
+library(ggplot2)
+library(corrplot)
+```
+## Introduction
+
+This report examines data on red variants of the Portuguese "Vinho Verde" wine. The primary goal is to determine the factors most predictive of quality of wine on a scale of 0 to 10, 10 being the best quality of wine. The predictor variables include fixed acidity, volatile acidity, citric acidity, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol for a total of 11 physiochemical properities to work with. Unfortunately, the data set did not specify the units on any of the predictor variables. There are a total of 1,599 observations in the data set.
+
+##Let's take a look at the distribution of our response variable quality of wine 
+```{r echo=FALSE}
+# Read in the data
+
+folder = "C:/Users/Katie/Documents/LUTHER/Senior/MATH327/Project #1"
+wine = read.csv(paste (folder, "winequality-red.csv", sep="/"),header=T)
+
+attach (wine)
+
+par (mfrow = c(1, 2))
+hist (quality)
+boxplot (quality, horizontal = F, xlab="quality", main="Boxplot of Quality")
+```
+??
+The distribution of quality of wine is skewed to the right only slightly, so it is not of much concern.
+
+```{r}
+par (mfrow = c(1, 2))
+hist (sqrt(quality))
+boxplot (sqrt (quality), horizontal = T, xlab="quality", main="Boxplot of sqrt(quality)")
+```
+
+##Distribution of each variable
+```{r}
+wine %>% gather() %>% head()
+ggplot(gather(wine), aes(value)) + 
+    geom_histogram(bins = 8) + 
+    facet_wrap(~key, scales = 'free_x')
+
+```
+Although density and pH follow a normal and symmetric distribution, predictor variables chlorides and residual sugar are. Transformations are needed to make these distributions more symmetric.
+
+##Transforming skewed predictor variables to make their distributions more symmetric
+
+Chlorides before transformation
+```{r}
+par (mfrow = c(1, 2))
+hist (chlorides)
+boxplot (chlorides, horizontal = F, xlab="chlorides", main="Boxplot of chlorides")
+```
+Taking a closer look at chlorides' distribution, it is clear that chlorides are very right skewed. A transformation will be needed to obtain a more symmetric and normal distribution.
+
+Chlorides after transformation
+```{r}
+par (mfrow = c(1, 2))
+hist (log(chlorides))
+boxplot (log(chlorides), horizontal = F, xlab="chlorides", main="Boxplot of Log(chlorides)")
+
+```
+After taking the log of the chlorides, they appear to have a more normal and symmetric distribution. We will continue to explore the pros and cons of this transformation as we go to build our first order model.
+
+Residual sugar also showed a right-skewed distribution. We will examine this now more closely.
+
+Residual sugar before transformation
+```{r}
+par (mfrow = c(1, 2))
+hist (residual_sugar)
+boxplot (residual_sugar, horizontal = F, xlab="residual_sugar", main="Boxplot of residual_sugar")
+
+```
+The histogram and boxplot both indicate that residual sugar is also skewed. We will look into transforming this predictor variable as well.
+
+Residual sugar after transformation
+```{r}
+par (mfrow = c(1, 2))
+hist (log(residual_sugar))
+boxplot (log(residual_sugar), horizontal = F, xlab="residual_sugar", main="Boxplot of Log(residual_sugar)")
+
+```
+Although the log of residual sugar is still fairly right-skewed, this transformation is still an improvement upon the original data and will be continue to be explored as we build our first order model.
+
+##2. Scatterplot matrix and correlations
+
+###Pairplot
+```{r}
+pairs(wine)
+
+```
+
+###Correlation Plot
+```{r}
+fit1 = lm (quality ~ fixed_acidity + volatile_acidity + citric_acid + residual_sugar + chlorides + free_sulfur_dioxide + total_sulfur_dioxide + density + pH + sulphates + alcohol)
+summfit1 = summary (fit1, correlation = T)
+corrplot (summfit1$correlation, method="number", number.cex=0.6)
+
+```
+```{r}
+cormat = cor (wine, use = "complete.obs")
+round (cormat, 2)
+
+```
+
+Looking at the correlations between the response and predictor variables, the pairs plot indicates that alochol is the only predictor variable with a fair correlation with quality of wine (r=0.48). The pairs and correlation plots also indicates a strong negative linear relationshp between fixed acidity and pH (r= -0.69) with mild negative linear relationships between volatile acidity and citric acid (r= -0.54), pH and citric acid (r= -0.55), and alcohol and density (r= -0.53). On the other hand, the pairs and correlation plots indicates that the only strong positive linear relationship exists between fixed acidity and density (r=0.63). Strong, but non-linear correlations were found between free sulfur dioxide and total sulfur dioxide (r=0.68) and fixed acidity and citric acid (r=0.68).
+
+In summation, only a handful of predictor variables are highly correlated with one another and the only predictor variable that has a mild correlation with the response is alcohol. 
+
+##3. Which of your variables are, or should be qualitative (categorical)?
+None of the predictor variables in wine dataset are categorical, nor should be.
+
+##4. Fit a first order model with all X variables, no transformations
+###Summary and Anova
+```{r}
+summary (fit1)
+anova(fit1)
+```
+ANALYSIS HERE
+
+###Residual Analysis
+```{r}
+par (mfrow = c(1, 2))
+plot (fit1, which = c(1, 2))
+
+``` 
+ANALYSIS HERE
+
+##4. Fit a first order model with all X variables, with the log of chlorides and residual sugar applied
+```{r}
+wine$log_chlorides = log(chlorides)
+wine$log_residual_sugar = log(residual_sugar)
+
+fit2 = lm (quality ~ fixed_acidity + volatile_acidity + citric_acid + log_residual_sugar + log_chlorides + free_sulfur_dioxide + total_sulfur_dioxide + density + pH + sulphates + alcohol, data=wine)
+
+summary (fit2)
+anova(fit2)
+
+```
+ANALYSIS HERE (how does it compare with the analysis above before the log was taken of chlorides and residule sugars? better or worse?)
+
+
+
+
+
+a. Which ones are significant?
+volatile_acidity, chlorides, total_sulfur_dioxide, sulphates, and alcohol are the significant predictor variables.
+
+b. Which ones are highly co-linear?
+Fixed acidity and citric acid are the most co-linear (.68) and fixed acidity and pH (-.69)
+
+fixed_acidity and pH
+
+
+c. Any evidence of curvature in the residuals? No
+  
+
+d. Constant residual variance? Yes
+
+
+#play
+```{r}
+#lm(Y ~ Y x1 * x2 * x3) interaction effects
+
+pairs(cbind.data.frame(quality, chlorides, residual_sugar))
+
+pairs(cbind.data.frame(quality, wine$log_chlorides, wine$log_residual_sugar))
+```
+
+#olsola05
+#goulce01
+```
