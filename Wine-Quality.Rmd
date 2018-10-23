@@ -119,6 +119,8 @@ anova(fit1)
 ```
 ANALYSIS HERE
 
+The $\hat{\beta}$ values for volatile_acidity, chlorides, total_sulfur_dioxide, sulphates, and alcohol are statistically significant to a level of .001. The $\hat{\beta}$ value for free_sulfer_dioxide is statistically significant to a level of .05. Therefore, we have reason to believe that these predictors likely have some effect on wine quality. 
+
 ###Residual Analysis
 ```{r}
 par (mfrow = c(1, 2))
