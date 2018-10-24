@@ -129,6 +129,12 @@ plot (fit1, which = c(1, 2))
 ``` 
 ANALYSIS HERE
 
+The normal Q-Q plot does not indicate any large departures from normality, though it does indicate that the data is slightly more spread out for small standardized residual values than the theoretical normal distribution. 
+
+Given the fact that the response variable is only quasi-continuous, the plot of the residuals vs fitted values does not indicated that there is non-constant variance. 
+
+Neither plot suggests there are any outliers. 
+
 ##4. Fit a first order model with all X variables, with the log of chlorides and residual sugar applied
 ```{r}
 wine$log_chlorides = log(chlorides)
