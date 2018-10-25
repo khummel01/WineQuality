@@ -121,7 +121,7 @@ ANALYSIS HERE
 
 The $\hat{\beta}$ values for volatile_acidity, chlorides, total_sulfur_dioxide, sulphates, and alcohol are statistically significant to a false-positive rate of $\alpha =.001$. From here forward we refer simply to $\alpha$. The $\hat{\beta}$ values for free_sulfer_dioxide and pH are statistically significant to $\alpha = .05$. Therefore, we have reason to believe that these predictors likely have some relationship with wine quality. 
 
-The adjusted $R^2$ for this model is 0.3561. This is not a value indicative of a highly precise model. We are not concerned by the difrerence between $R^2$ and adjusted $R^2$ because they are so close together, at 0.3606 and  0.3561, respectively. 
+The adjusted $R^2$ for this model is 0.3561. This is not a value indicative of a highly precise model. We are not concerned by the magnitude of the difference between $R^2$ and adjusted $R^2$ because they are so close together, at 0.3606 and  0.3561, respectively. We note, however, that the adjusted $R^2$ is lower than the regular $R^2$, which could indicate that we are overfitting the data.
 
 ###Residual Analysis
 ```{r}
@@ -153,7 +153,7 @@ The $\hat{\beta}$ values for volatile_acidity, log_chlorides, total_sulfur_dioxi
 
 There are some differences between this model and the model with the predictors that had not been transformed. The log_chlorides predictor is in the same category of significance as the chlorides predictor was in the previous model, though the p-value for log_chlorides is 0.00011 whereas the p-value for chlorides was 8.37e-06. While neither the log_residual_sugar predictor nor the residual_sugar predictor were significant, log_residual_sugar has a p-value of 0.26415, whereas residual_sugar had a p-value of 0.539600. All of the significant predictors in the previous model are still significant in this, the transformed model. The only predictor that was not significant in the previous model that is significant in the transformed model is citric_acid.
 
-
+The adjusted $R^2$ for this model is  0.3542, whereas the adjusted $R^2$ for the untrasformed model was 0.3561. The adjusted $R^2$ for this model is not a value indicative of a highly precise model, and it is lower than the adjusted $R^2$ for the untrasformed model. We are not concerned by the magnitude of the difference between $R^2$ and adjusted $R^2$ because they are so close together, at 0.3587 and  0.3542, respectively. We note, however, that the adjusted $R^2$ is lower than the regular $R^2$, which could indicate that we are overfitting the data.
 
 
 a. Which ones are significant?
