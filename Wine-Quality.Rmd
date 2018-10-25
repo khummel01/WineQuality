@@ -121,6 +121,8 @@ ANALYSIS HERE
 
 The $\hat{\beta}$ values for volatile_acidity, chlorides, total_sulfur_dioxide, sulphates, and alcohol are statistically significant to a false-positive rate of $\alpha =.001$. From here forward we refer simply to $\alpha$. The $\hat{\beta}$ values for free_sulfer_dioxide and pH are statistically significant to $\alpha = .05$. Therefore, we have reason to believe that these predictors likely have some relationship with wine quality. 
 
+The adjusted $R^2$ for this model is 0.3561. This is not a value indicative of a highly precise model. We are not concerned by the difrerence between $R^2$ and adjusted $R^2$ because they are so close together, at 0.3606 and  0.3561, respectively. 
+
 ###Residual Analysis
 ```{r}
 par (mfrow = c(1, 2))
