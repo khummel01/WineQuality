@@ -123,6 +123,8 @@ The $\hat{\beta}$ values for volatile_acidity, chlorides, total_sulfur_dioxide, 
 
 The adjusted $R^2$ for this model is 0.3561. This is not a value indicative of a highly precise model. We are not concerned by the magnitude of the difference between $R^2$ and adjusted $R^2$ because they are so close together, at 0.3606 and  0.3561, respectively. We note, however, that the adjusted $R^2$ is lower than the regular $R^2$, which could indicate that we are overfitting the data.
 
+To a level of $\alpha = .001$, we are sure that for the predictor variables of fixed_acidity, volatile_acidity, chlorides, total_sulfur_dioxide, density, pH, sulphates, and alcohol adding that predictor to the model (in the addition order indicated in the Analysis of Variance Table above) changed the linear relatioship between the combination of predictor variables and the response variable. To a level of $\alpha = .01$, we are sure that the adding free_sulfur_dioxide as a predictor to the model (in the addition order indicated in the Analysis of Variance Table above) changed the linear relationship between the combination of predictor variables and the response variable.
+
 ###Residual Analysis
 ```{r}
 par (mfrow = c(1, 2))
@@ -131,7 +133,7 @@ plot (fit1, which = c(1, 2))
 ``` 
 ANALYSIS HERE
 
-The normal Q-Q plot does not indicate any large departures from normality, though it does indicate that the data is slightly more spread out for small standardized residual values than the theoretical normal distribution. 
+The normal Q-Q plot does not indicate any large departures from normality, though it does indicate that the data is slightly left skewed. 
 
 Given the fact that the response variable is only quasi-continuous, the plot of the residuals vs fitted values does not indicated that there is non-constant variance. 
 
@@ -154,6 +156,8 @@ The $\hat{\beta}$ values for volatile_acidity, log_chlorides, total_sulfur_dioxi
 There are some differences between this model and the model with the predictors that had not been transformed. The log_chlorides predictor is in the same category of significance as the chlorides predictor was in the previous model, though the p-value for log_chlorides is 0.00011 whereas the p-value for chlorides was 8.37e-06. While neither the log_residual_sugar predictor nor the residual_sugar predictor were significant, log_residual_sugar has a p-value of 0.26415, whereas residual_sugar had a p-value of 0.539600. All of the significant predictors in the previous model are still significant in this, the transformed model. The only predictor that was not significant in the previous model that is significant in the transformed model is citric_acid.
 
 The adjusted $R^2$ for this model is  0.3542, whereas the adjusted $R^2$ for the untrasformed model was 0.3561. The adjusted $R^2$ for this model is not a value indicative of a highly precise model, and it is lower than the adjusted $R^2$ for the untrasformed model. We are not concerned by the magnitude of the difference between $R^2$ and adjusted $R^2$ because they are so close together, at 0.3587 and  0.3542, respectively. We note, however, that the adjusted $R^2$ is lower than the regular $R^2$, which could indicate that we are overfitting the data.
+
+There is no statistically significant difference between the Analysis of Variance Table for this model and the previous, untransformed model. 
 
 
 a. Which ones are significant?
