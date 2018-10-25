@@ -135,7 +135,7 @@ ANALYSIS HERE
 
 The normal Q-Q plot does not indicate any large departures from normality, though it does indicate that the data is slightly left skewed. 
 
-Given the fact that the response variable is only quasi-continuous, the plot of the residuals vs fitted values does not indicated that there is non-constant variance. 
+Given the fact that the response variable is only quasi-continuous, the plot of the residuals vs. fitted values does not indicated that there is non-constant variance. 
 
 Neither plot suggests there are any outliers. 
 
@@ -159,7 +159,6 @@ The adjusted $R^2$ for this model is  0.3542, whereas the adjusted $R^2$ for the
 
 There is no statistically significant difference between the Analysis of Variance Table for this model and the previous, untransformed model. 
 
-
 a. Which ones are significant?
 volatile_acidity, chlorides, total_sulfur_dioxide, sulphates, and alcohol are the significant predictor variables.
 
@@ -168,12 +167,9 @@ Fixed acidity and citric acid are the most co-linear (.68) and fixed acidity and
 
 fixed_acidity and pH
 
-
 c. Any evidence of curvature in the residuals? No
   
-
 d. Constant residual variance? Yes
-
 
 #play
 ```{r}
@@ -183,7 +179,6 @@ pairs(cbind.data.frame(quality, chlorides, residual_sugar))
 
 pairs(cbind.data.frame(quality, wine$log_chlorides, wine$log_residual_sugar))
 ```
-
 #olsola05
 #goulce01
 ```
