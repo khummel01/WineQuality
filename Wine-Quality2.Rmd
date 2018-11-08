@@ -465,7 +465,10 @@ vif(fit.full_bic)
 
 
 ## Interpretation
+i. Wine quality decreases with each additional unit of volatile acidity, citric acid, log(chlorides), total sulfur dioxide, density, pH, and total sulphur dioxide x sulphates. The steepest negative slope is for density at -9.849. The other negative slopes range between -0.01 and -1.03. Conversely, quality increases with each additional unit of fixed acidity, log(residual sugar), free sulphur dioxide, sulphates, alochol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest positive slope is sulphates at 1.195 while the other positive slopes lie between 0.004 and 0.360. 
 
+ii. Make some example response predictions with confidence intervals and interpret
+those results.
 
 
 # Testing
