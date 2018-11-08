@@ -19,11 +19,7 @@ This report examines 1,599 red variants of the Portuguese “Vinho Verde” wine
 
 ## Introduction
 The quality of wine depends heavily on the climate, weather, and soil that the fruit was raised in. Heat is also an essential variable as the plant uses sunlight and chlorophyll to produce the glucose it needs for growth and vigor by combining CO2 and water. Furthermore, vinicultural and oenological practices also make the difference between a quality or mediocre wine. Using linear regression methods we learned in Applied Statistics, we examined the effects of eleven predictor variables on determining the quality of Portuguese “Vinho Verde” red wines.  These variables included fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol.
-## SECOND PART OF INTRODUCTION ADD DATA OR DELETE...
-We found that among this set of wines, higher average XX is associated with wines that have XX quality. Some predictor variables were correlated with each other(?). For example, all of the XX. We found two significant interaction effects(?). The negative relationship between XX and XX was stronger (steeper) for XX compared to XX. 
-
-The final model explained 38.3% of the variation in MPG values. Prediction intervals of XX for XX had margins of error equal to about XX % of the predicted values.
-
+The final model explained 38.3% of the variation in MPG values. Prediction intervals of wine quality had margins of error equal to about +/- 1.25 quality units and 24% of the predicted values.
 
 ## Exploratory Analysis 
 ```{r echo=FALSE}
@@ -528,7 +524,7 @@ Wait for Laura's code
 ## Interpretation
 i. Wine quality decreases with each additional unit of volatile acidity, citric acid, log(chlorides), total sulfur dioxide, density, pH, and total sulphur dioxide x sulphates. The steepest negative slope is for density at -9.849. The other negative slopes range between -0.01 and -1.03. Conversely, quality increases with each additional unit of fixed acidity, log(residual sugar), free sulphur dioxide, sulphates, alochol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest positive slope is sulphates at 1.195 while the other positive slopes lie between 0.004 and 0.360. 
 
-todo: From this final model, we can infer that...
+From this final model we can 
 
 # Predictions
 
@@ -620,3 +616,14 @@ By the Breusch-Pagan test for non-constant variance, because the p-value is smal
 2.
 3.
 4.
+
+## Conclusion:
+We have found that for red variants of the Portuguese “Vinho Verde” wine:
+1.	Alcohol was the only predictor variable with a fair correlation with wine quality (r=0.48). 
+2.	The pairs and correlation plots indicated a strong negative linear relationship between fixed acidity and pH (r= -0.69). 
+3.	There were mild negative linear relationships between volatile acidity and citric acid (r= -0.54), pH and citric acid (r= -0.55), and alcohol and density (r= -0.53). 
+4.	Only one strong positive linear relationship exists between fixed acidity and density (r=0.63). Strong, but non-linear correlations were found between free sulfur dioxide and total sulfur dioxide (r=0.68) and fixed acidity and citric acid (r=0.68).
+5.	We concluded that there was no statistically significant difference between the transformed residual sugars and chlorides and the untransformed residual sugars and chlorides. The distributions of the predictor variable became more evenly distributed, but not more linear. 
+6.	The final model explained 38.3% of the variation in wine quality.
+7.	Prediction intervals of wine quality had margins of error equal to about +/- 1.25 quality units and 24% of the predicted values.
+
