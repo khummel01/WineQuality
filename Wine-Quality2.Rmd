@@ -9,10 +9,19 @@ library(ggplot2)
 library(corrplot)
 library ("MASS")
 ```
+## Title
+Predicting Wine Quality of Red Variants of the Portuguese “Vinho Verde” Wine
+
+## Abstract
+This report examines 1,599 red variants of the Portuguese “Vinho Verde” wine using linear regression methods. The primary goal is to determine what predictor variables are most effective at predicting the quality of wine, as well as to see if there is a certain combination of predictor variables that most accurately predicts the quality of wine. Wine quality was reported as a sensory value judgement on a scale from 0 to 10 (10 being the very best wine). The eleven predictor variables were fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol. Unfortunately, the data set did not specify the units on any of the predictor variables. 
 
 ## Introduction
+The quality of wine depends heavily on the climate, weather, and soil that the fruit was raised in. Heat is also an essential variable as the plant uses sunlight and chlorophyll to produce the glucose it needs for growth and vigor by combining CO2 and water. Furthermore, vinicultural and oenological practices also make the difference between a quality or mediocre wine. Using linear regression methods we learned in Applied Statistics, we examined the effects of eleven predictor variables on determining the quality of Portuguese “Vinho Verde” red wines.  These variables included fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol.
+## SECOND PART OF INTRODUCTION ADD DATA OR DELETE...
+We found that among this set of wines, higher average XX is associated with wines that have XX quality. Some predictor variables were correlated with each other(?). For example, all of the XX. We found two significant interaction effects(?). The negative relationship between XX and XX was stronger (steeper) for XX compared to XX. 
 
-This report examines data on red variants of the Portuguese "Vinho Verde" wine. The primary goal is to determine the factors most predictive of quality of wine on a scale of 0 to 10, 10 being the best quality of wine. The predictor variables include fixed acidity, volatile acidity, citric acidity, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol for a total of 11 physiochemical properities to work with. Unfortunately, the data set did not specify the units on any of the predictor variables. There are a total of 1,599 observations in the data set.
+The final model explained 38.3% of the variation in MPG values. Prediction intervals of XX for XX had margins of error equal to about XX % of the predicted values.
+
 
 ## Exploratory Analysis 
 ```{r echo=FALSE}
