@@ -11,10 +11,19 @@ library ("MASS")
 library(car)
 
 ```
+## Title
+Predicting Wine Quality of Red Variants of the Portuguese “Vinho Verde” Wine
+
+## Abstract
+This report examines 1,599 red variants of the Portuguese “Vinho Verde” wine using linear regression methods. The primary goal is to determine what predictor variables are most effective at predicting the quality of wine, as well as to see if there is a certain combination of predictor variables that most accurately predicts the quality of wine. Wine quality was reported as a sensory value judgement on a scale from 0 to 10 (10 being the very best wine). The eleven predictor variables were fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol. Unfortunately, the data set did not specify the units on any of the predictor variables. 
 
 ## Introduction
+The quality of wine depends heavily on the climate, weather, and soil that the fruit was raised in. Heat is also an essential variable as the plant uses sunlight and chlorophyll to produce the glucose it needs for growth and vigor by combining CO2 and water. Furthermore, vinicultural and oenological practices also make the difference between a quality or mediocre wine. Using linear regression methods we learned in Applied Statistics, we examined the effects of eleven predictor variables on determining the quality of Portuguese “Vinho Verde” red wines.  These variables included fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol.
+## SECOND PART OF INTRODUCTION ADD DATA OR DELETE...
+We found that among this set of wines, higher average XX is associated with wines that have XX quality. Some predictor variables were correlated with each other(?). For example, all of the XX. We found two significant interaction effects(?). The negative relationship between XX and XX was stronger (steeper) for XX compared to XX. 
 
-This report examines data on red variants of the Portuguese "Vinho Verde" wine. The primary goal is to determine the factors most predictive of quality of wine on a scale of 0 to 10, 10 being the best quality of wine. The predictor variables include fixed acidity, volatile acidity, citric acidity, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol for a total of 11 physiochemical properities to work with. Unfortunately, the data set did not specify the units on any of the predictor variables. There are a total of 1,599 observations in the data set.
+The final model explained 38.3% of the variation in MPG values. Prediction intervals of XX for XX had margins of error equal to about XX % of the predicted values.
+
 
 ## Exploratory Analysis 
 ```{r echo=FALSE}
@@ -517,8 +526,9 @@ Because the removal of these potential outliers did not significantly effect our
 Wait for Laura's code
 
 ## Interpretation
+i. Wine quality decreases with each additional unit of volatile acidity, citric acid, log(chlorides), total sulfur dioxide, density, pH, and total sulphur dioxide x sulphates. The steepest negative slope is for density at -9.849. The other negative slopes range between -0.01 and -1.03. Conversely, quality increases with each additional unit of fixed acidity, log(residual sugar), free sulphur dioxide, sulphates, alochol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest positive slope is sulphates at 1.195 while the other positive slopes lie between 0.004 and 0.360. 
 
-From this final model, we can infer that...
+todo: From this final model, we can infer that...
 
 # Predictions
 
@@ -534,6 +544,9 @@ pred.table$MOE = (pred.table$Upper - pred.table$Lower) / 2
 pred.table [c(900, 1300, 410, 575, 188, 462, 1587, 119, 1280, 888, 97, 1550),]
 
 ```
+
+ii. Make some example response predictions with confidence intervals and interpret
+those results.
 
 The biggest takeaway from these predictions is that no matter the quality of wine, the model can predict the quality level for any given red wine variant with a precision of 1.25. 
 
