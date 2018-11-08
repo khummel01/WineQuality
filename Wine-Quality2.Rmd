@@ -553,6 +553,68 @@ The biggest takeaway from these predictions is that no matter the quality of win
 We note that the prediction interval for row 900 (3.6-6.1) does not quite contain the actual quality value of 3, nor do rows 410 and 575 (4.4-6.9) where the actual quality of wine is 4, or rows 97 (4.0-6.5) and 1550 (5.1-7.6) where the acutal quality of wine is 8. We expect this to happen 5% because we're using 95% confidence. 
 
 # Final Conclusions
+# LAST SECTION (7) START HERE
+
+## Residual Diagnostics
+
+We examine the residuals of the best model.
+
+```{r}
+#pfd, this chunc
+par (mfrow = c(2, 2))
+plot(fit.full_bic)
+```
+
+>\begin{pfd}
+
+The plot of residuals vs fitted values shows no major departures from the assumptions of constant variance, absence of outliers, and lack of curvature. The normal Q-Q plot shows that the data do not appear to be non-normal, except for a slight left skew. The Scale-Location plot indicates very non-constant variance. Because this plot indicates such strongly different conclusions from the other plots, we believe that the crook in the LOWESS line on the Scale-Location plot is due to the quasi-continuity of our response variable. There are no points with a leverage above the leverage cutoff, $\frac{2}{\sqrt{ \frac{p}{n}}} = \frac{2}{\sqrt{ \frac{10}{1599}}} = 25.3$, and the Cook's distance cutoff is so far beyond the range of the data that it is not on the plot, so we are not concerned that any particular data point has too great an effect on the model. 
+
+The studentized deleted residuals shows two points of concern. The have stuentized deleted residuals with an absolute value greater than 4. This indicates that they might be outliers. 
+>\end{pfd}
+
+```{r}
+plot (fit.full_bic$fitted.values, rstudent (fit.full_bic),
+      main="Studentized Deleted Residuals", xlab="Fitted Quality",
+      ylab="Student. Del. Resid.")
+```
+
+```{r}
+par (mfrow = c(1,2))
+boxplot (fit.full_bic$residuals, main="Final Model Residuals")
+plot (fit.full_bic, which=2, main="Normal Q-Q")
+```
+
+The box plot of residuals and the normal Q-Q plot both indicate a wider spread of residuals than a normal distribution. A few of the standardized residuals have an absolute value greater than 4. These points may be outliers. {\bf See lines 653 and 833 of the dataframe.}
+
+Because we have no data collection times or similar data, we cannot plot the residuals vs the sequence of data collection. 
+
+The added variable plots, below, show no discernable trend. The fact that the trend lines appear horizontal is in acordance with our $\hat{\beta}$ estimates, but we cannot discern if the sign of the trends corresponds to the $\hat{\beta}$ estimates or not, neither can we discern whether or not the slopes of the trend lines are actually zero or are simply very close to zero.
+
+
+```{r}
+plot.new()
+par (mfrow=c(2,2))
+#the following line defines a function
+resplot.low = function (x, y, title) {
+ plot (x, y, main=title, xlab=quote(x), ylab=quote(y))
+ abline (h=0, col='blue')
+ lowfit = lowess (x, y)
+ lines (lowfit$x, lowfit$y, col='red')
+}
+
+#these lines call the function
+resplot.low (volatile_acidity.c*total_sulfur_dioxide.c, fit.full_bic$residuals, "centered volatile acidity times centered total sulfur dioxide")
+resplot.low (total_sulfur_dioxide.c*sulphates.c, fit.full_bic$residuals, "centered total sulfur dioxide times centered sulphates")
+resplot.low (sulphates.c*alcohol.c, fit.full_bic$residuals, "centered sulphates times centered alcohol")
+```
+
+```{r}
+library(lmtest)
+bptest(fit.full_bic, varformula = NULL, studentize = TRUE, data = list())
+```
+By the Breusch-Pagan test for non-constant variance, because the p-value is small (for $\alpha = .001$) we reject the null hypothesis there is constant variance, so we understand that there is nonconstant variance.
+
+## Influence Analysis
 
 1.
 2.
