@@ -1,6 +1,8 @@
 ---
 title: "Wine-Quality"
-output: word_document
+output:
+  pdf_document: default
+  word_document: default
 ---
 ```{r echo=FALSE}
 # Libraries
@@ -106,9 +108,9 @@ round (cormat, 2)
 ```
 
 ```{r fig.height=8, fig.width=8}
-pairs(data.frame(fixed_acidity, volatile_acidity, citric_acid, wine$log_residual_sugar, wine$log_chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, pH, sulphates, alcohol, quality))
-summfit1 = summary (fit1, correlation = T)
-head(summfit1$correlation)
+pairs(data.frame(fixed_acidity, volatile_acidity, citric_acid, log_residual_sugar, log_chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, pH, sulphates, alcohol, quality))
+#summfit1 = summary (fit1, correlation = T)
+#head(summfit1$correlation)
 ```
 
 Looking at the correlations between the response and predictor variables, the pairs plot indicates that alcohol is the only predictor variable with a fair correlation with quality of wine (r=0.48). The pairs and correlation plots also indicate a strong negative linear relationship between fixed acidity and pH (r= -0.69) with mild negative linear relationships between volatile acidity and citric acid (r= -0.54), pH and citric acid (r= -0.55), and alcohol and density (r= -0.53). On the other hand, the pairs and correlation plots indicates that the only strong positive linear relationship exists between fixed acidity and density (r=0.63). Strong, but non-linear correlations were found between free sulfur dioxide and total sulfur dioxide (r=0.68) and fixed acidity and citric acid (r=0.68). 
@@ -303,7 +305,7 @@ anova(fit.intRed2)
 
 ```
 
-All interaction effects are significant when added to our reduced order model. Volatile_acidity x total_sulphur dioxide remained significant to a false positive rate of $\alpha = .001$ (p-value = 0.0008). Total_sulfur_dioxide x sulphates on the other hand gained significance in the reduced full-order model where it is now signicant at $\alpha = .001$ (p-value = 3.66e-08) compared to the previous model where it was significant only to $\alpha = .05$. Sulphates x alcohol also gained significance to the rate of $\alpha = .001$ (p-value = 0.000574).
+All interaction effects are significant when added to our reduced first-order model. Volatile_acidity x total_sulphur dioxide remained significant to a false positive rate of $\alpha = .001$ (p-value = 0.0008). Total_sulfur_dioxide x sulphates on the other hand gained significance in the reduced full-order model where it is now signicant at $\alpha = .001$ (p-value = 3.66e-08) compared to the previous model where it was significant only to $\alpha = .05$. Sulphates x alcohol also gained significance to the rate of $\alpha = .001$ (p-value = 0.000574).
 
 Quality decreases which each additional unit of volatile acidity, log(chlorides), total sulfur dioxide,  ph, or total_sulphur_dioxide x sulphates. The steepest negative slope is volatile acidity at -0.878 with the second steepest slope following not too close behind at -0.476 for pH. On the other hand, quality increaes with each additional unit of free sulphur dioxide, sulphates, alcohol, volatile_acidity x total_sulfur_dioxide or sulphates x alcohol. The steepest slope out of these predictors are sulphates with a slope of 1.40. 
 
@@ -311,7 +313,7 @@ The adjusted $R^2$ for this model is 0.3818. Again, this is not a value indicati
 
 ## Plotting Interaction Effects
 
-We will examine the interaction effect of the most significant cross-product predictor total sulfur dioxide and sulphates.
+We will examine the interaction effect of the most significant cross-product predictor total sulfur dioxide and sulphates from our reduced first-order model.
 
 ```{r}
 # Categorize sulphates
@@ -389,29 +391,34 @@ quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxid
 We note that all primary predictors in the model that are involved in an interaction effect are present in the model. We also note that the stepwise regression model decided to keep citric acid as a predictor while upon doing backwards elimination ourselves, we had decided to remove citric acid for our reduced order model because we did not find it to be very significant.
 
 ```{r}
-summary(fit.full_bic)
-anova(fit.full_bic)
+fit.sbc.final = lm(quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c) 
+summary(fit.final)
+#anova(fit.full_bic)
 ```
+ 
+All predictors were found to be significant to a false positive rate of of $\alpha = .001$ except for citic acid is significant at $\alpha = .01$.
 
-Volatile_acidity.c, log(chlorides), total_sulphur_dioxide.c, sulphates.c, alcohol.c, volatile_acidity.c x total_sulfur_dioxide.c, total_sulfur_dioxide.c x sulphates.c, and sulphates.c x alcohol.c are all significant to a false positive rate of of $\alpha = .001$. PH was found to be significant at $\alpha = .01$ while citric acid and free sulfur dioxide are significant at $\alpha = .05$. 
+Quality decreases with each additional unit of volatile_acidity.c, citric acid, log(chlorides), total_sulfur_dioxide.c, pH, and total sulphur dioxide x sulphates. The steepest negative slope is volatile acidity at -1.05 while the other negative slopes range between -0.002 and -0.20. Conversely, quality increases with each additional unit of sulphates, alcohol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest positive slope is sulphates at 1.19 while the other positive slopes lie between 0.009 and 0.37.
 
-Quality decreases with each additional unit of volatile_acidity.c, citric acid, log(chlorides), total_sulfur_dioxide.c, density, pH, and total sulphur dioxide x sulphates. The steepest negative slope is density at -9.841 while the other negative slopes range between -0.01 and -1.03. Conversely, quality increases with each additional unit of fixed acidity, log(residual sugar), free sulphur dioxide, sulphates, alcohol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest positive slope is sulphates at 1.195 while the other positive slopes lie between 0.004 and 0.360.
-
-The adjusted $R^2$ for this model is 0.3833. This is an improvement from our full-order mode, reduced model, and reduced model with added interaction effects where  $R^2$ was 0.3542, 0.3541, and 0.3818 respectively, accounting for a greatest difference of 0.0292. Furthermore, the residual standard error of this model is  0.6342, a decrease by a factor of 0.0148, 0.0148, and 0.00080 from the full-order, reduced, and reduced model with added interaction effects respectively. 
+The adjusted $R^2$ for this model is 0.3826. This is an improvement from our full-order model, reduced model (model with only significant predictors), and reduced model with added interaction effects where  $R^2$ was 0.354, 0.354, and 0.381 respectively, accounting for a greatest difference of 0.028. Furthermore, the residual standard error of this model is  0.6345, a decrease by a factor of 0.015, 0.015, and 0.000429 from the full-order, reduced, and reduced model with added interaction effects respectively. 
 
 Summary of adjusted $R^2$ and residual standard error for the models we've examined so far:
 
 ```{r}
-cbind.data.frame (Model=c("All predictors (w/ transformations)", "Only significant predictors", "Stepwise with SBC criterion"),
-                  Adj.R2 = c(summary (fit2)$adj.r.squared,
-                             summary (fit.myReduced)$adj.r.squared,
-                             summary (fit.full_bic)$adj.r.squared),
-                  Sigma.hat = c(summary (fit2)$sigma,
-                                summary(fit.myReduced)$sigma,
-                                summary(fit.full_bic)$sigma))
+cbind.data.frame (Model=c("All predictors (w/ transformations)", "Only significant predictors", "Significant predictors with interaction effects", "Stepwise with SBC criterion"),
+                  Adj.R2 = c(summary(fit2)$adj.r.squared,
+                            summary (fit.myReduced)$adj.r.squared,
+                             summary (fit.intRed2)$adj.r.squared,
+                             summary (fit.sbc.final)$adj.r.squared),
+                  Sigma.hat = c(summary(fit2)$sigma,
+                                summary (fit.myReduced)$sigma,
+                                summary(fit.intRed2)$sigma,
+                                summary(fit.sbc.final)$sigma))
 ```
 
-Though all the models output low adjusted $R^2$ values and relatively high residual standard error values, the stepwise model with the SBC criterion does have the highest adjusted $R^2$ value by 0.02 and the lowest residual standard eror by roughly 0.01. Due to these slight improvements the stepwise model has over the the other models we have gathered, we will designate this model as the best model for predicting the quality of red Portuguese "Vinho Verde" wine.
+Though all the models output low adjusted $R^2$ values and relatively high residual standard error values, the stepwise model with the SBC criterion does have the highest adjusted $R^2$ and lowest residual stand error values. We note that the stepwise model with SBC criterion is very in its adjusted $R^2$ and residual standward
+
+we will designate this model as the best model for predicting the quality of red Portuguese "Vinho Verde" wine.
 
 ## Best Model Analysis
 ### Residual Diagnostics
@@ -421,7 +428,7 @@ We examine the residuals of the best model.
 ```{r}
 #pfd, this chunc
 par (mfrow = c(2, 2))
-plot(fit.full_bic)
+plot(fit.final)
 ```
 
 The plot of residuals vs fitted values shows no major departures from the assumptions of constant variance, absence of outliers, and lack of curvature. The normal Q-Q plot shows that the data do not appear to be non-normal, except for a slight left skew. The Scale-Location plot indicates very non-constant variance. Because this plot indicates such strongly different conclusions from the other plots, we believe that the crook in the LOWESS line on the Scale-Location plot is due to the quasi-continuity of our response variable. There are no points with a leverage above the leverage cutoff, $\frac{2}{\sqrt{ \frac{p}{n}}} = \frac{2}{\sqrt{ \frac{10}{1599}}} = 25.3$, and the Cook's distance cutoff is so far beyond the range of the data that it is not on the plot, so we are not concerned that any particular data point has too great an effect on the model. 
@@ -429,14 +436,14 @@ The plot of residuals vs fitted values shows no major departures from the assump
 The studentized deleted residuals shows two points of concern. The have stuentized deleted residuals with an absolute value greater than 4. This indicates that they might be outliers. 
 
 ```{r}
-plot (fit.full_bic$fitted.values, rstudent (fit.full_bic),
+plot (fit.final$fitted.values, rstudent (fit.final),
       main="Studentized Deleted Residuals", xlab="Fitted Quality",
       ylab="Student. Del. Resid.")
 ```
 
 ```{r}
 par (mfrow = c(1,2))
-boxplot (fit.full_bic$residuals, main="Final Model Residuals")
+boxplot (fit.final$residuals, main="Final Model Residuals")
 plot (fit.full_bic, which=2, main="Normal Q-Q")
 ```
 
@@ -464,7 +471,7 @@ resplot.low (sulphates.c*alcohol.c, fit.full_bic$residuals, "centered sulphates 
 ```
 
 ```{r}
-bptest(fit.full_bic, varformula = NULL, studentize = TRUE, data = list())
+bptest(fit.final, varformula = NULL, studentize = TRUE, data = list())
 ```
 
 By the Breusch-Pagan test for non-constant variance, because the p-value is small (for $\alpha = .001$) we reject the null hypothesis that there is constant variance, so we understand that there is nonconstant variance.
@@ -472,7 +479,7 @@ By the Breusch-Pagan test for non-constant variance, because the p-value is smal
 ### Response vs. Fitted Values
 
 ```{r}
-plot(fit.full_bic$fitted.values, quality, main='Quality vs Fitted', xlab = "Fitted Values", ylab = "Quality")
+plot(fit.final$fitted.values, quality, main='Quality vs Fitted', xlab = "Fitted Values", ylab = "Quality")
 abline(a=0,b=1, col='red')
 
 ```
@@ -483,15 +490,18 @@ Although the quality vs. fitted values plot looks odd due to the quasi-continous
 ### Hat Matrix Diagonals
 
 ```{r}
-hatdiag = hatvalues(fit.full_bic)
+hatdiag = hatvalues(fit.final)
 plot(hatdiag, main="Leverage Values", xlab="Row Number", ylab="Hatdiag")
 abline (h=2*mean(hatdiag), col='red')
 
 ```
 
+
+volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c 
+
 ```{r fig.height=8, fig.width=8}
 hatcolor = ifelse (hatdiag > 2*mean(hatdiag), 2,1)
-pairs (data.frame(volatile_acidity.c, citric_acid, log_chlorides, total_sulfur_dioxide.c, pH, sulphates.c, alcohol.c, volatile_acidity.c, quality), col=hatcolor, pch=1)
+pairs (data.frame(volatile_acidity.c, citric_acid, log_chlorides, total_sulfur_dioxide.c, pH, sulphates.c, alcohol.c, volatile_acidity.c:total_sulfur_dioxide.c, total_sulfur_dioxide.c:sulphates.c, sulphates.c:alcohol.c , quality), col=hatcolor, pch=1)
 
 length(which(hatcolor == 2))
 ```
@@ -502,17 +512,17 @@ The hat matrix diagonals method identified 135 high leverage points, indicating 
 
 ```{r}
 # Cutoff for leverage values
-n.fit.full_bic = fit.full_bic$df.residual + fit.full_bic$rank
-Leverage.cut = 2 * sqrt(fit.full_bic$rank / (n.fit.full_bic))
+n.fit.final = fit.final$df.residual + fit.final$rank
+Leverage.cut = 2 * sqrt(fit.final$rank / (n.fit.final))
 Leverage.cut
 ```
 
-The high leverage cutoff value is $2\sqrt{p/n}=0.1937$. We will apply this leverage to our final model and plot the results.
+The high leverage cutoff value is $2\sqrt{p/n}=0.166$. We will apply this leverage to our final model and plot the results.
 
 ```{r}
 par (mfrow = c(1,1))
-wine$dffits = dffits (fit.full_bic)
-wine$quality.fit = 10^fit.full_bic$fitted.values
+wine$dffits = dffits (fit.final)
+wine$quality.fit = 10^fit.final$fitted.values
 plot (seq (1, length (wine$dffits)), wine$dffits,
       main="DFFits, Final Model",
       xlab="Row Number", ylab="DFFits")
@@ -543,7 +553,7 @@ cookscutoff
 The percentile cutoff value for Cook's Distance is 0.953. We will now plot Cook's Distance values to determine if any points exceed the cutoff value of 0.953.
 
 ```{r}
-cookd = cooks.distance (fit.full_bic)
+cookd = cooks.distance (fit.final)
 plot(cookd, xlab="Row Number", ylab="Cook's Distance", main="Cook's Distance")
 
 ```
@@ -563,8 +573,8 @@ No observations are highlighted in red due to the fact that none of the Cook's D
 We will now use the variance inflation factors method to detect the presence of multicollinearity. 
 
 ```{r}
-vif(fit.full_bic)
-mean (vif(fit.full_bic))
+vif(fit.final)
+mean (vif(fit.final))
 
 ```
 
@@ -573,16 +583,16 @@ We note that the variance inflation factors range from 1.07 to 8.05 and that all
 We will now remove rows in the data set whose DFFits value was above 0.55 and determine the extent to which these potentially influential outliers have on our final model.
 
 ```{r}
-plot(fit.full_bic$fitted.values[-c(87, 92, 152, 653, 1080, 1082, 1236)], fit.full_bic_ex$fitted.values, xlab="Final Model with Potential Influential Observations Removed", ylab="Final Model", main="Wine Quality of Final Model vs. Final Model with Removed Observations")
+wine.ex = wine[abs(wine$dffits) <.55,]
+fit.final.ex = lm (quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c, data=wine.ex)
+
+plot(fit.final$fitted.values[-c(87, 92, 152, 653, 1080, 1082, 1236)], fit.final.ex$fitted.values, xlab="Final Model with Potential Influential Observations Removed", ylab="Final Model", main="Wine Quality of Final Model vs. Final Model with Removed Observations")
 
 ```
 
 Judging from the plot of wine quality values from the final model versus the final model with the potentially influential observations removed, the line is very linear and suggests that the removal of these observations had no significant affect on the final model. 
 
 ```{r}
-wine.ex = wine[abs(wine$dffits) <.55,]
-fit.full_bic_ex = lm (quality ~ fixed_acidity + volatile_acidity.c + citric_acid + log_residual_sugar + log_chlorides + free_sulfur_dioxide + total_sulfur_dioxide.c + density + pH + sulphates.c + alcohol.c + volatile_acidity.c*total_sulfur_dioxide.c + total_sulfur_dioxide.c*sulphates.c + sulphates.c*alcohol.c, data=wine.ex)
-
 summary(fit.full_bic_ex)
 
 ```
@@ -607,7 +617,7 @@ Finally, we will create prediction intervals for individual red wine variants. W
 
 pred.all = as.data.frame (predict (fit.full_bic, interval="prediction"))
 pred.all2 = round (pred.all, 1)
-pred.table = cbind.data.frame (quality, fixed_acidity, volatile_acidity.c, citric_acid, log_residual_sugar, log_chlorides, free_sulfur_dioxide, total_sulfur_dioxide.c, density, pH, sulphates.c, alcohol.c, volatile_acidity.c*total_sulfur_dioxide.c, total_sulfur_dioxide.c*sulphates.c, sulphates.c*alcohol.c, pred.all2$fit, pred.all2$lwr, pred.all2$upr)
+pred.table = cbind.data.frame (wine$quality, wine$fixed_acidity, wine$volatile_acidity.c, wine$citric_acid, wine$log_residual_sugar, wine$log_chlorides, wine$free_sulfur_dioxide, wine$total_sulfur_dioxide.c, wine$density, wine$pH, wine$sulphates.c, wine$alcohol.c, wine$volatile_acidity.c*total_sulfur_dioxide.c, wine$total_sulfur_dioxide.c*sulphates.c, wine$sulphates.c*alcohol.c, pred.all2$fit, pred.all2$lwr, pred.all2$upr)
 names (pred.table) [16:18] = c("Fit", "Lower", "Upper")
 pred.table$MOE = (pred.table$Upper - pred.table$Lower) / 2
 pred.table [c(900, 1300, 410, 575, 188, 462, 1587, 119, 1280, 888, 97, 1550),]
