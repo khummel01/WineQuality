@@ -37,7 +37,7 @@ hist (quality, xlab="Quality", main="Histogram of Quality")
 boxplot (quality, horizontal = T, xlab="Quality", main="Boxplot of Quality")
 ```
 
-The distribution of quality of wine is slightly skewed to the left, according to the box plot. Because in the histogram the data seem fairly symetric, we look for an alternate explanation for the appearance of the box plot. Because the width of the middle two quartiles is only a single unit, we know that the only option for the median is for it to be at the same value as either the first or third quartile. Therefore, we do not consider transforming the response variable, quality.
+The distribution of quality of wine is slightly skewed to the left, according to the box plot. Because in the histogram the data seem fairly symetric, we look for an alternate explanation for the appearance of the box plot. The width of the middle two quartiles is only a single unit, therefore, we know that the only option for the median is for it to be at the same value as either the first or third quartile. As a result, we do not consider transforming the response variable, quality.
 
 ### Distribution of each variable
 
@@ -111,7 +111,7 @@ summfit1 = summary (fit1, correlation = T)
 head(summfit1$correlation)
 ```
 
-Looking at the correlations between the response and predictor variables, the pairs plot indicates that alcohol is the only predictor variable with a fair correlation with quality of wine (r=0.48). The pairs and correlation plots also indicate a strong negative linear relationship between fixed acidity and pH (r= -0.69) with mild negative linear relationships between volatile acidity and citric acid (r= -0.54), pH and citric acid (r= -0.55), and alcohol and density (r= -0.53). On the other hand, the pairs and correlation plots indicates that the only strong positive linear relationship exists between fixed acidity and density (r=0.63). Strong, but non-linear correlations were found between free sulfur dioxide and total sulfur dioxide (r=0.68) and fixed acidity and citric acid (r=0.68). 
+Looking at the correlations between the response and predictor variables, the pairs plot indicates that alcohol is the only predictor variable with a fair correlation with quality of wine (r=0.48). The pairs and correlation plots also indicate a strong negative linear relationship between fixed acidity and pH (r= -0.69) with mild negative linear relationships between volatile acidity and citric acid (r= -0.54), pH and citric acid (r= -0.55), and alcohol and density (r= -0.53). On the other hand, the pairs and correlation plots indicate that the only strong positive linear relationship exists between fixed acidity and density (r=0.63). Strong, but non-linear correlations were found between free sulfur dioxide and total sulfur dioxide (r=0.68) and fixed acidity and citric acid (r=0.68). 
  
 Additional note, none of the predictor variables in wine dataset are categorical, nor should be.
 
@@ -155,7 +155,7 @@ plot (fit1, which=3)
 
 The normal Q-Q plot does not indicate any large departures from normality, though it does indicate that the residuals are slightly left skewed. 
 
-Given the fact that the response variable is only quasi-continuous, the plot of the residuals vs. fitted values does not indicate that there is nonconstant variance. It also suggests that there is no curvature of the respons for which the model is not accounting. The plot of the absolute residuals versus the fitted values suggests that there is nonconstant variance (as indicated by the crooked LOWESS line). We will perform a Box-Cox analysis next ot evaluate this non-constant variance further.
+Given the fact that the response variable is only quasi-continuous, the plot of the residuals vs. fitted values does not indicate that there is nonconstant variance. It also suggests that there is no curvature of the response for which the model is not accounting. The plot of the absolute residuals versus the fitted values suggests that there is nonconstant variance (as indicated by the crooked LOWESS line). We will perform a Box-Cox analysis next ot evaluate this non-constant variance further.
 
 None of the plots suggest there are any outliers. 
 
