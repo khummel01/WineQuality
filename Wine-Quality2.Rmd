@@ -39,7 +39,7 @@ hist (quality, xlab="Quality", main="Histogram of Quality")
 boxplot (quality, horizontal = T, xlab="Quality", main="Boxplot of Quality")
 ```
 
-The distribution of quality of wine is slightly skewed to the left, according to the box plot. Because in the histogram the data seem fairly symetric, we look for an alternate explanation for the appearance of the box plot. Because the width of the middle two quartiles is only a single unit, we know that the only option for the median is for it to be at the same value as either the first or third quartile. Therefore, we do not consider transforming the response variable, quality.
+The distribution of quality of wine is slightly skewed to the left, according to the box plot. Because in the histogram the data seem fairly symetric, we look for an alternate explanation for the appearance of the box plot. The width of the middle two quartiles is only a single unit, therefore, we know that the only option for the median is for it to be at the same value as either the first or third quartile. As a result, we do not consider transforming the response variable, quality.
 
 ### Distribution of each variable
 
@@ -113,7 +113,7 @@ pairs(data.frame(fixed_acidity, volatile_acidity, citric_acid, log_residual_suga
 #head(summfit1$correlation)
 ```
 
-Looking at the correlations between the response and predictor variables, the pairs plot indicates that alcohol is the only predictor variable with a fair correlation with quality of wine (r=0.48). The pairs and correlation plots also indicate a strong negative linear relationship between fixed acidity and pH (r= -0.69) with mild negative linear relationships between volatile acidity and citric acid (r= -0.54), pH and citric acid (r= -0.55), and alcohol and density (r= -0.53). On the other hand, the pairs and correlation plots indicates that the only strong positive linear relationship exists between fixed acidity and density (r=0.63). Strong, but non-linear correlations were found between free sulfur dioxide and total sulfur dioxide (r=0.68) and fixed acidity and citric acid (r=0.68). 
+Looking at the correlations between the response and predictor variables, the pairs plot indicates that alcohol is the only predictor variable with a fair correlation with quality of wine (r=0.48). The pairs and correlation plots also indicate a strong negative linear relationship between fixed acidity and pH (r= -0.69) with mild negative linear relationships between volatile acidity and citric acid (r= -0.54), pH and citric acid (r= -0.55), and alcohol and density (r= -0.53). On the other hand, the pairs and correlation plots indicate that the only strong positive linear relationship exists between fixed acidity and density (r=0.63). Strong, but non-linear correlations were found between free sulfur dioxide and total sulfur dioxide (r=0.68) and fixed acidity and citric acid (r=0.68). 
  
 Additional note, none of the predictor variables in wine dataset are categorical, nor should be.
 
@@ -157,7 +157,7 @@ plot (fit1, which=3)
 
 The normal Q-Q plot does not indicate any large departures from normality, though it does indicate that the residuals are slightly left skewed. 
 
-Given the fact that the response variable is only quasi-continuous, the plot of the residuals vs. fitted values does not indicate that there is nonconstant variance. It also suggests that there is no curvature of the respons for which the model is not accounting. The plot of the absolute residuals versus the fitted values suggests that there is nonconstant variance (as indicated by the crooked LOWESS line). We will perform a Box-Cox analysis next ot evaluate this non-constant variance further.
+Given the fact that the response variable is only quasi-continuous, the plot of the residuals vs. fitted values does not indicate that there is nonconstant variance. It also suggests that there is no curvature of the response for which the model is not accounting. The plot of the absolute residuals versus the fitted values suggests that there is nonconstant variance (as indicated by the crooked LOWESS line). We will perform a Box-Cox analysis next ot evaluate this non-constant variance further.
 
 None of the plots suggest there are any outliers. 
 
@@ -637,9 +637,12 @@ mean(pred.table$Lower <= pred.table$quality & pred.table$quality <= pred.table$U
 
 Wine quality decreases with each additional unit of volatile acidity, citric acid, log(chlorides), total sulfur dioxide, density, pH, and total sulphur dioxide x sulphates. The steepest negative slope is for density at -9.849. The other negative slopes range between -0.01 and -1.03. Conversely, quality increases with each additional unit of fixed acidity, log(residual sugar), free sulphur dioxide, sulphates, alochol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest positive slope is sulphates at 1.195 while the other positive slopes lie between 0.004 and 0.360. 
 
-#TODO: Describe the final regression model that was obtained and provide your interpretation of that model
+The both directions stepwise regression model with the SBC criterion ended with the model:
+quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c. 
 
-#TODO: Illustrate some inferences about the response variable that can be obtained from the final model
+All primary predictors in the model that are involved in an interaction effect are present in the model. Notably, the stepwise regression model decided to keep citric acid as a predictor which we ourselves removed while upon doing backwards elimination ourselves, as we did not find it significant. 
+
+Though all the models output low adjusted R^2 values and relatively high residual standard error values, the stepwise model with the SBC criterion does have the hightest adjusted  value by 0.02 and the lowest residual standard eror by roughly 0.01. Due to these slight improvements the stepwise model has over the the other models we have gathered, we will designate this model as the best prediction model and most accurately depicts which predictor variables impact the wine quality. 
 
 # Conclusion
 
@@ -652,7 +655,8 @@ We have found that for red variants of the Portuguese “Vinho Verde” wine:
 5.	We concluded that there was no statistically significant difference between the transformed residual sugars and chlorides and the untransformed residual sugars and chlorides. The distributions of the predictor variable became more evenly distributed, but not more linear. 
 6.	The final model explained 38.3% of the variation in wine quality.
 7.	Prediction intervals of wine quality had margins of error equal to about +/- 1.25 quality units and 24% of the predicted values.
-#TODO: talk about significant interaction effects. (there are three!)
+8.  Three interaction effects are significant. The most significant interaction effect is volatile_acidity * total_sulfur_dioxide to a false-positive rate of α = .001. Total_sulfur_dioxide * sulphates and sulphates * alcohol are also significant interactions to a false-positive rate of α = .005.
 
-#TODO: Does your analysis raise any questions that can't be answered from the current data set? If so, what are they?
+
+Our dataset does not allow us to determine the labels associated with the wines, as no data about grape types, wine brands, wine selling prices, etc. are included. More information may also allow us to draw conclusions on the grape's region of origin, climate, and type. 
 
