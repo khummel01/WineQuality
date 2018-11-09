@@ -644,3 +644,5 @@ We have found that for red variants of the Portuguese “Vinho Verde” wine:
 7.	Prediction intervals of wine quality had margins of error equal to about +/- 1.25 quality units and 24% of the predicted values.
 #TODO: talk about significant interaction effects. (there are three!)
 
+#TODO: Does your analysis raise any questions that can't be answered from the current data set? If so, what are they?
+
