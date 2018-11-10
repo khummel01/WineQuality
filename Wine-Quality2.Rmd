@@ -108,9 +108,7 @@ round (cormat, 2)
 ```
 
 ```{r fig.height=8, fig.width=8}
-pairs(data.frame(fixed_acidity, volatile_acidity, citric_acid, log_residual_sugar, log_chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, pH, sulphates, alcohol, quality))
-#summfit1 = summary (fit1, correlation = T)
-#head(summfit1$correlation)
+pairs(data.frame(fixed_acidity, volatile_acidity, citric_acid, log_residual_sugar, log_chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, pH, sulphates, alcohol, quality), pch=1)
 ```
 
 Looking at the correlations between the response and predictor variables, the pairs plot indicates that alcohol is the only predictor variable with a fair correlation with quality of wine (r=0.48). The pairs and correlation plots also indicate a strong negative linear relationship between fixed acidity and pH (r= -0.69) with mild negative linear relationships between volatile acidity and citric acid (r= -0.54), pH and citric acid (r= -0.55), and alcohol and density (r= -0.53). On the other hand, the pairs and correlation plots indicate that the only strong positive linear relationship exists between fixed acidity and density (r=0.63). Strong, but non-linear correlations were found between free sulfur dioxide and total sulfur dioxide (r=0.68) and fixed acidity and citric acid (r=0.68). 
@@ -284,7 +282,7 @@ attach(wine)
 
 ```
 
-Given that this particular wine data set did not come with indicators as to possible interaction effects, nor did we have access to an investigator who had prior knowledge about the data set, we will have to explore all possible interaction effects ourselves using the significant predictors we found in the first order model.
+Given that this particular wine data set did not come with indicators as to possible interaction effects, nor did we have access to an investigator who had prior knowledge about the data set, we will have to explore all possible interaction effects ourselves using the significant predictors we found in the first-order model.
 
 ```{r}
 fit.intRed = lm (quality ~ (volatile_acidity.c + log_chlorides.c + free_sulfur_dioxide.c + total_sulfur_dioxide.c + pH.c + sulphates.c + alcohol.c)^2)
@@ -298,7 +296,7 @@ Three interaction effects are significant. The most significant interaction effe
 We will now fit the reduced first-order model containing only our significant predictors with the interaction effects volatile_acidity x total_sulfur_dioxide, sulfur_dioxide x sulphates, and sulphates x alcohol added to the model and test whether these interaction effects are significant.
 
 ```{r}
-fit.intRed2 = lm (quality ~ volatile_acidity.c + log_chlorides.c + free_sulfur_dioxide.c + total_sulfur_dioxide.c + pH.c + sulphates.c + alcohol.c + volatile_acidity.c*total_sulfur_dioxide.c + total_sulfur_dioxide.c*sulphates.c + sulphates.c*alcohol.c )
+fit.intRed2 = lm (quality ~ volatile_acidity.c + log_chlorides + free_sulfur_dioxide + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c*total_sulfur_dioxide.c + total_sulfur_dioxide.c*sulphates.c + sulphates.c*alcohol.c )
 
 summary(fit.intRed2)
 anova(fit.intRed2)
@@ -380,7 +378,6 @@ Given that the wine data set has many predictors, we will use the both direction
 fit.full_bic = lm (quality ~ fixed_acidity + volatile_acidity.c + citric_acid + log_residual_sugar + log_chlorides + free_sulfur_dioxide + total_sulfur_dioxide.c + density + pH + sulphates.c + alcohol.c + volatile_acidity.c*total_sulfur_dioxide.c + total_sulfur_dioxide.c*sulphates.c + sulphates.c*alcohol.c, data=wine)
 
 step(fit.full_bic, direction="both", k=log(1599))
-#AIC: step(fit.first_int, direction="both")
 
 ```
 
@@ -392,20 +389,19 @@ We note that all primary predictors in the model that are involved in an interac
 
 ```{r}
 fit.sbc.final = lm(quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c) 
-summary(fit.final)
-#anova(fit.full_bic)
+summary(fit.sbc.final)
 ```
  
 All predictors were found to be significant to a false positive rate of of $\alpha = .001$ except for citic acid is significant at $\alpha = .01$.
 
 Quality decreases with each additional unit of volatile_acidity.c, citric acid, log(chlorides), total_sulfur_dioxide.c, pH, and total sulphur dioxide x sulphates. The steepest negative slope is volatile acidity at -1.05 while the other negative slopes range between -0.002 and -0.20. Conversely, quality increases with each additional unit of sulphates, alcohol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest positive slope is sulphates at 1.19 while the other positive slopes lie between 0.009 and 0.37.
 
-The adjusted $R^2$ for this model is 0.3826. This is an improvement from our full-order model, reduced model (model with only significant predictors), and reduced model with added interaction effects where  $R^2$ was 0.354, 0.354, and 0.381 respectively, accounting for a greatest difference of 0.028. Furthermore, the residual standard error of this model is  0.6345, a decrease by a factor of 0.015, 0.015, and 0.000429 from the full-order, reduced, and reduced model with added interaction effects respectively. 
+The adjusted $R^2$ for this model is 0.3826. This is an improvement from our full-order model, manual backward elimination, and manual backward elimination with added interaction effects where  $R^2$ was 0.354, 0.354, and 0.381 respectively, accounting for a greatest difference of 0.028. Furthermore, the residual standard error of this model is  0.6345, a decrease by a factor of 0.015, 0.015, and 0.000429 from the full-order, reduced, and reduced model with added interaction effects respectively. 
 
 Summary of adjusted $R^2$ and residual standard error for the models we've examined so far:
 
 ```{r}
-cbind.data.frame (Model=c("All predictors (w/ transformations)", "Only significant predictors", "Significant predictors with interaction effects", "Stepwise with SBC criterion"),
+cbind.data.frame (Model=c("All predictors (w/ transformations)", "Manual Backward Elimination", "Manual Backward Elmination with added interaction effects", "Stepwise with SBC criterion"),
                   Adj.R2 = c(summary(fit2)$adj.r.squared,
                             summary (fit.myReduced)$adj.r.squared,
                              summary (fit.intRed2)$adj.r.squared,
@@ -416,9 +412,9 @@ cbind.data.frame (Model=c("All predictors (w/ transformations)", "Only significa
                                 summary(fit.sbc.final)$sigma))
 ```
 
-Though all the models output low adjusted $R^2$ values and relatively high residual standard error values, the stepwise model with the SBC criterion does have the highest adjusted $R^2$ and lowest residual stand error values. We note that the stepwise model with SBC criterion is very in its adjusted $R^2$ and residual standward
+Though all the models output low adjusted $R^2$ values and relatively low residual standard error values, the stepwise model with the SBC criterion does have the highest adjusted $R^2$ and lowest residual standard error values. We note that the stepwise model with SBC criterion's adjusted $R^2$ and residual standard error values are very similar to the adjusted $R^2$ and residual standard error values of our manual backward elimination model with added interaction effects. Upon further comparsion of these two similar models, we note that the predictors for each model are the same except for the absence of the variable free sulphur dioxide in the stepwise model with SBC and the the absence of citric acid in our manual backward elimination model with added interaction effects. We also find that although these two models share much resemblance, every predictor that is shared between the two has a greater p-value in the stepwise regression model than in the manual backward elimination model.
 
-we will designate this model as the best model for predicting the quality of red Portuguese "Vinho Verde" wine.
+Due to the slightly higher $R^2$ and p-values as well as slightly lower residual standard error. We will designate this model as the best model for predicting the quality of red Portuguese "Vinho Verde" wine.
 
 ## Best Model Analysis
 ### Residual Diagnostics
@@ -426,25 +422,24 @@ we will designate this model as the best model for predicting the quality of red
 We examine the residuals of the best model.
 
 ```{r}
-#pfd, this chunc
 par (mfrow = c(2, 2))
-plot(fit.final)
+plot(fit.sbc.final)
 ```
 
 The plot of residuals vs fitted values shows no major departures from the assumptions of constant variance, absence of outliers, and lack of curvature. The normal Q-Q plot shows that the data do not appear to be non-normal, except for a slight left skew. The Scale-Location plot indicates very non-constant variance. Because this plot indicates such strongly different conclusions from the other plots, we believe that the crook in the LOWESS line on the Scale-Location plot is due to the quasi-continuity of our response variable. There are no points with a leverage above the leverage cutoff, $\frac{2}{\sqrt{ \frac{p}{n}}} = \frac{2}{\sqrt{ \frac{10}{1599}}} = 25.3$, and the Cook's distance cutoff is so far beyond the range of the data that it is not on the plot, so we are not concerned that any particular data point has too great an effect on the model. 
 
-The studentized deleted residuals shows two points of concern. The have stuentized deleted residuals with an absolute value greater than 4. This indicates that they might be outliers. 
+The studentized deleted residuals shows two points of concern. The have studentized deleted residuals with an absolute value greater than 4. This indicates that they might be outliers. 
 
 ```{r}
-plot (fit.final$fitted.values, rstudent (fit.final),
+plot (fit.sbc.final$fitted.values, rstudent (fit.sbc.final),
       main="Studentized Deleted Residuals", xlab="Fitted Quality",
       ylab="Student. Del. Resid.")
 ```
 
 ```{r}
 par (mfrow = c(1,2))
-boxplot (fit.final$residuals, main="Final Model Residuals")
-plot (fit.full_bic, which=2, main="Normal Q-Q")
+boxplot (fit.sbc.final$residuals, main="Final Model Residuals")
+plot (fit.sbc.final, which=2, main="Normal Q-Q")
 ```
 
 The box plot of residuals and the normal Q-Q plot both indicate a wider spread of residuals than a normal distribution. A few of the standardized residuals have an absolute value greater than 4. These points may be outliers. {\bf See lines 653 and 833 of the dataframe.}
@@ -471,7 +466,7 @@ resplot.low (sulphates.c*alcohol.c, fit.full_bic$residuals, "centered sulphates 
 ```
 
 ```{r}
-bptest(fit.final, varformula = NULL, studentize = TRUE, data = list())
+bptest(fit.sbc.final, varformula = NULL, studentize = TRUE, data = list())
 ```
 
 By the Breusch-Pagan test for non-constant variance, because the p-value is small (for $\alpha = .001$) we reject the null hypothesis that there is constant variance, so we understand that there is nonconstant variance.
@@ -479,41 +474,38 @@ By the Breusch-Pagan test for non-constant variance, because the p-value is smal
 ### Response vs. Fitted Values
 
 ```{r}
-plot(fit.final$fitted.values, quality, main='Quality vs Fitted', xlab = "Fitted Values", ylab = "Quality")
+plot(fit.sbc.final$fitted.values, quality, main='Quality vs Fitted', xlab = "Fitted Values", ylab = "Quality")
 abline(a=0,b=1, col='red')
 
 ```
 
-Although the quality vs. fitted values plot looks odd due to the quasi-continous nature of the response values, the plot overall looks good. There appears to be a possible outlier where the fitted value equals 7.8 and the quality of wine is 5, but due to our earlier Q-Q, residuals vs. fitted values, and square root of absolute standardized residuals vs. fitted values plots, we know that this is not the case. No curvature is apparent nor nonconstant variance.
+Although the quality vs. fitted values plot looks odd due to the quasi-continous nature of the response values, the plot overall looks good. There appears to be a possible outlier where the fitted value equals 7.8 where the quality of wine is 5, but due to our earlier Q-Q, residuals vs. fitted values, and square root of absolute standardized residuals vs. fitted values plots, we are not concerned with this one seemingly outlying point. No curvature is apparent nor nonconstant variance.
 
 ## Influence Analysis of the best stepwise model with interactions
 ### Hat Matrix Diagonals
 
 ```{r}
-hatdiag = hatvalues(fit.final)
+hatdiag = hatvalues(fit.sbc.final)
 plot(hatdiag, main="Leverage Values", xlab="Row Number", ylab="Hatdiag")
 abline (h=2*mean(hatdiag), col='red')
 
 ```
 
-
-volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c 
-
 ```{r fig.height=8, fig.width=8}
-hatcolor = ifelse (hatdiag > 2*mean(hatdiag), 2,1)
-pairs (data.frame(volatile_acidity.c, citric_acid, log_chlorides, total_sulfur_dioxide.c, pH, sulphates.c, alcohol.c, volatile_acidity.c:total_sulfur_dioxide.c, total_sulfur_dioxide.c:sulphates.c, sulphates.c:alcohol.c , quality), col=hatcolor, pch=1)
+hatcolor = ifelse (hatdiag > 2*mean(hatdiag), 2, 1)
+pairs (data.frame(quality, volatile_acidity.c, citric_acid, log_chlorides, total_sulfur_dioxide.c, pH, sulphates.c, alcohol.c, volatile_acidity.c:total_sulfur_dioxide.c, total_sulfur_dioxide.c:sulphates.c, sulphates.c:alcohol.c), col=hatcolor)
 
-length(which(hatcolor == 2))
+#length(which(hatcolor == 2))
 ```
 
-The hat matrix diagonals method identified 135 high leverage points, indicating the presence of many outliers in the data set. However, a great majory of the identified potential outliers are not outlying at all, but rather reside in the middle of all the observations. We will deter removing all 135 outliers until we have investigated other outlier and influencial identifying methods. 
+The hat matrix diagonals method identified over 100 high leverage points, indicating the presence of many outliers in the data set. However, a great majory of the identified potential outliers are not outlying at all, but rather reside in the middle of all the observations. We will deter removing all 135 outliers until we have investigated other outlier and influencial identifying methods. 
 
 ### DFFITS
 
 ```{r}
 # Cutoff for leverage values
-n.fit.final = fit.final$df.residual + fit.final$rank
-Leverage.cut = 2 * sqrt(fit.final$rank / (n.fit.final))
+n.fit.final = fit.sbc.final$df.residual + fit.sbc.final$rank
+Leverage.cut = 2 * sqrt(fit.sbc.final$rank / (n.fit.final))
 Leverage.cut
 ```
 
@@ -521,8 +513,8 @@ The high leverage cutoff value is $2\sqrt{p/n}=0.166$. We will apply this levera
 
 ```{r}
 par (mfrow = c(1,1))
-wine$dffits = dffits (fit.final)
-wine$quality.fit = 10^fit.final$fitted.values
+wine$dffits = dffits (fit.sbc.final)
+wine$quality.fit = 10^fit.sbc.final$fitted.values
 plot (seq (1, length (wine$dffits)), wine$dffits,
       main="DFFits, Final Model",
       xlab="Row Number", ylab="DFFits")
@@ -531,7 +523,7 @@ abline (-Leverage.cut, 0, lty=2)
 
 ```
 
-The DFFits plot shows some red wine variants with high DFFits values. From the output, we glean that there are quite a few rows with high DFFits values greater than the leverage cutoff 0.1937. We will now highlight these potential influenctial data points in red in the pairs plot below to visualize how they might be affecting our model.
+The DFFits plot shows some red wine variants with high DFFits values. From the output, we glean that there are quite a few rows with high DFFits values greater than the leverage cutoff 0.165 We will now highlight these potential influenctial data points in red in the pairs plot below to visualize how they might be affecting our model.
 
 ```{r fig.height=8, fig.width=8}
 dffitscolor = ifelse (abs(wine$dffits) > Leverage.cut, 2,1)
@@ -553,7 +545,7 @@ cookscutoff
 The percentile cutoff value for Cook's Distance is 0.953. We will now plot Cook's Distance values to determine if any points exceed the cutoff value of 0.953.
 
 ```{r}
-cookd = cooks.distance (fit.final)
+cookd = cooks.distance (fit.sbc.final)
 plot(cookd, xlab="Row Number", ylab="Cook's Distance", main="Cook's Distance")
 
 ```
@@ -573,41 +565,40 @@ No observations are highlighted in red due to the fact that none of the Cook's D
 We will now use the variance inflation factors method to detect the presence of multicollinearity. 
 
 ```{r}
-vif(fit.final)
-mean (vif(fit.final))
+vif(fit.sbc.final)
+mean (vif(fit.sbc.final))
 
 ```
 
-We note that the variance inflation factors range from 1.07 to 8.05 and that all variance inflation factors are less than 10--a good sign that there are no indications that multicollinearity may be excessively influencing the least squares estimates of our model. Fixed acidity and density have the highest variance inflation values, which we already know to be highly correlated. The mean of the VIFs is 2.89. Although this is larger than one, we do not deem 2.89 to be "considerably larger than one", and conclude that there are no serious multicollinearity issues in our final model. 
+We note that the variance inflation factors range from 1.05 to 1.63 and that all variance inflation factors are less than 10--a good sign that there are no indications that multicollinearity may be excessively influencing the least squares estimates of our model. Citric acid and volatile acidity have the highest inflation values, 2.172 and 1.633 respectively, which we already know to be highly correlated. The mean of the VIFs is 1.434. Although this is larger than one, we do not deem 1.434 to be "considerably larger than one", and conclude that there are no serious multicollinearity issues in our final model. 
 
 We will now remove rows in the data set whose DFFits value was above 0.55 and determine the extent to which these potentially influential outliers have on our final model.
 
 ```{r}
-wine.ex = wine[abs(wine$dffits) <.55,]
-fit.final.ex = lm (quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c, data=wine.ex)
-
-plot(fit.final$fitted.values[-c(87, 92, 152, 653, 1080, 1082, 1236)], fit.final.ex$fitted.values, xlab="Final Model with Potential Influential Observations Removed", ylab="Final Model", main="Wine Quality of Final Model vs. Final Model with Removed Observations")
+wine.ex = wine[abs(wine$dffits) < .55,]
+plot(fit.sbc.final$fitted.values[-c(87, 92, 152, 653, 1080, 1082)], fit.final.ex$fitted.values, xlab="Final Model with Potential Influential Observations Removed", ylab="Final Model", main="Wine Quality of Final Model vs. Final Model with Removed Observations")
 
 ```
 
 Judging from the plot of wine quality values from the final model versus the final model with the potentially influential observations removed, the line is very linear and suggests that the removal of these observations had no significant affect on the final model. 
 
 ```{r}
-summary(fit.full_bic_ex)
+fit.sbc.final.ex = lm (quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c, data=wine.ex)
+summary(fit.sbc.final.ex)
 
 ```
 
-Comparing the summary out put of the final model and the final model with the potentially influential observations removed, all predictors significant to a false positive rate of $\alpha = .001$ in our final model (fit.full_bic) are still signifcant at $\alpha = .001$ in the remedial model with the outlying observations removed excpet for log(chlorides) which dropped down to $\alpha = .01$ significance level.
+Comparing the summary output of the final model and the final model with the potentially influential observations removed, all predictors significant to a false positive rate of $\alpha = .001$ in our final model (fit.sbc.final) are still signifcant at $\alpha = .001$ in the remedial model with the outlying observations removed except for log(chlorides) which dropped down to $\alpha = .01$ significance level.
 
-Quality still decreases with each additional unit of volatile_acidity.c, citric acid, log(chlorides), total_sulfur_dioxide.c, density, pH, and total sulphur dioxide x sulphates and increases with each additional unit of fixed acidity, log(residual sugar), free sulphur dioxide, sulphates, alcohol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest negative slope is still density, but it is slighly steeper at -10.65 compared to the final model's -9.841. The steepest positive slope is still sulphates, with a slightly faster rate of 1.207 compared to the final model's 1.195.
+Quality still decreases with each additional unit of volatile_acidity.c, citric acid, log(chlorides), total_sulfur_dioxide.c, pH, and total sulphur dioxide x sulphates and increases with each additional unit of sulphates, alcohol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest negative slope is still volatile acidity at -1.03, however, this is slightly less steep than -1.05 from the original final model. The steepest positive slope is still sulphates, with a slightly faster rate of 1.21 compared to the final model's 1.19.
 
-The adjusted $R^2$ for this model is 0.397. This is a slight improvement of about .01 from the final model without the notable observations removed. The residual standard error is 0.626, a decrease of .01 from the final model. 
+The adjusted $R^2$ for this model is 0.393. This is a slight improvement of about .01 from the final model without the notable observations removed. The residual standard error is 0.628, a decrease of .01 from the final model. 
 
-Given that the plot of the final model versus the remedial model with observations removed was very linear and that no significant improvements in adjusted $R^2$ and the residual standard error were made, we will 
+Given that the plot of the final model versus the remedial model with observations removed was very linear and that no significant improvements in adjusted $R^2$ and the residual standard error were made, we will not remove the observations indicated as outliers by the DFFits method.
 
 ## Remedial Measures
 
-Given that the plot of the final model versus the remedial model with observations removed was very linear and that no significant improvements in adjusted $R^2$ and the residual standard error were made, we will proceed with our original final model (potentially influential observations intact)--no remedial measures needed.
+Given that the plot of the final model versus the remedial model with potentially influencial observations removed was very linear and that no significant improvements in adjusted $R^2$ and the residual standard error were made, we will proceed with our original final model (potentially influential observations intact)--no remedial measures needed.
 
 # Predictions
 
@@ -615,22 +606,22 @@ Finally, we will create prediction intervals for individual red wine variants. W
 
 ```{r}
 
-pred.all = as.data.frame (predict (fit.full_bic, interval="prediction"))
+pred.all = as.data.frame (predict (fit.sbc.final, interval="prediction"))
 pred.all2 = round (pred.all, 1)
-pred.table = cbind.data.frame (wine$quality, wine$fixed_acidity, wine$volatile_acidity.c, wine$citric_acid, wine$log_residual_sugar, wine$log_chlorides, wine$free_sulfur_dioxide, wine$total_sulfur_dioxide.c, wine$density, wine$pH, wine$sulphates.c, wine$alcohol.c, wine$volatile_acidity.c*total_sulfur_dioxide.c, wine$total_sulfur_dioxide.c*sulphates.c, wine$sulphates.c*alcohol.c, pred.all2$fit, pred.all2$lwr, pred.all2$upr)
-names (pred.table) [16:18] = c("Fit", "Lower", "Upper")
+pred.table = cbind.data.frame (wine$quality, wine$volatile_acidity.c, wine$citric_acid, wine$log_chlorides, wine$total_sulfur_dioxide.c, wine$pH, wine$sulphates.c, wine$alcohol.c, wine$volatile_acidity.c*total_sulfur_dioxide.c, wine$total_sulfur_dioxide.c*sulphates.c, wine$sulphates.c*alcohol.c, pred.all2$fit, pred.all2$lwr, pred.all2$upr)
+names (pred.table) [12:14] = c("Fit", "Lower", "Upper")
+names(pred.table) [1] = c("quality")
 pred.table$MOE = (pred.table$Upper - pred.table$Lower) / 2
 pred.table [c(900, 1300, 410, 575, 188, 462, 1587, 119, 1280, 888, 97, 1550),]
 
 ```
 
-The biggest takeaway from these predictions is that no matter the quality of wine, the model can predict the quality level for any given red wine variant with a precision of 1.25 quality units.. 
+The biggest takeaway from these predictions is that no matter the quality of wine, the model can predict the quality level for any given red wine variant with a precision of about 1.25 quality units.
 
-We note that the prediction interval for row 900 (3.6-6.1) does not quite contain the actual quality value of 3, nor do rows 410 and 575 (4.4-6.9) where the actual quality of wine is 4, or rows 97 (4.0-6.5) and 1550 (5.1-7.6) where the acutal quality of wine is 8. However, we expect this to happen 5% because we're using 95% confidence. The calculation below proves this to be a fact--that approximately 5% of predictions will fall outside of the confidence interval.
+We note that every prediction fell within the confidence interval. 
 
 ```{r}
 mean(pred.table$Lower <= pred.table$quality & pred.table$quality <= pred.table$Upper)
-
 ```
 
 # Interpretation
@@ -642,7 +633,8 @@ quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxid
 
 All primary predictors in the model that are involved in an interaction effect are present in the model. Notably, the stepwise regression model decided to keep citric acid as a predictor which we ourselves removed while upon doing backwards elimination ourselves, as we did not find it significant. 
 
-Though all the models output low adjusted R^2 values and relatively high residual standard error values, the stepwise model with the SBC criterion does have the hightest adjusted  value by 0.02 and the lowest residual standard eror by roughly 0.01. Due to these slight improvements the stepwise model has over the the other models we have gathered, we will designate this model as the best prediction model and most accurately depicts which predictor variables impact the wine quality. 
+Though all the models output low adjusted $R^2$ values and relatively high residual standard error values, the stepwise model with the SBC criterion does have the hightest adjusted  value by 0.02 and the lowest residual standard eror by roughly 0.01. Due to these slight improvements the stepwise model has over the the other models we have gathered   
+@FINISH!!!!
 
 # Conclusion
 
@@ -655,7 +647,7 @@ We have found that for red variants of the Portuguese “Vinho Verde” wine:
 5.	We concluded that there was no statistically significant difference between the transformed residual sugars and chlorides and the untransformed residual sugars and chlorides. The distributions of the predictor variable became more evenly distributed, but not more linear. 
 6.	The final model explained 38.3% of the variation in wine quality.
 7.	Prediction intervals of wine quality had margins of error equal to about +/- 1.25 quality units and 24% of the predicted values.
-8.  Three interaction effects are significant. The most significant interaction effect is volatile_acidity * total_sulfur_dioxide to a false-positive rate of α = .001. Total_sulfur_dioxide * sulphates and sulphates * alcohol are also significant interactions to a false-positive rate of α = .005.
+8.  Three interaction effects are significant. The most significant interaction effect is volatile_acidity x total sulfur dioxide to a false-positive rate of α = .001. Total_sulfur_dioxide x sulphates and sulphates x alcohol are also significant interactions to a false-positive rate of α = .005.
 
 
 Our dataset does not allow us to determine the labels associated with the wines, as no data about grape types, wine brands, wine selling prices, etc. are included. More information may also allow us to draw conclusions on the grape's region of origin, climate, and type. 
