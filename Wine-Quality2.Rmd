@@ -20,7 +20,7 @@ Predicting Wine Quality of Red Variants of the Portuguese “Vinho Verde” Wine
 
 ## Abstract
 
-This report examines 1,599 red variants of the Portuguese “Vinho Verde” wine using linear regression methods. The primary goal is to determine what predictor variables are most effective at predicting the quality of wine, as well as to see if there is a certain combination of predictor variables that most accurately predicts the quality of wine. Wine quality was reported as a sensory value judgement on a scale from 0 to 10 (10 being the very best wine). The eleven predictor variables were fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol. Unfortunately, the data set did not specify the units on any of the predictor variables. 
+This report examines 1,599 red variants of the Portuguese “Vinho Verde” wine using linear regression methods. The primary goal is to determine what predictor variables are most effective at predicting the quality of wine, as well as to see if there is a certain combination of predictor variables that most accurately predicts the quality of wine. Wine quality was reported as a sensory value judgement on a scale from 0 to 10 (10 being the best wine). The eleven predictor variables were fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol. Unfortunately, the data set did not specify the units on any of the predictor variables. 
 
 ## Introduction
 
@@ -311,7 +311,7 @@ The adjusted $R^2$ for this model is 0.3818. Again, this is not a value indicati
 
 ## Plotting Interaction Effects
 
-We will examine the interaction effect of the most significant cross-product predictor total sulfur dioxide and sulphates from our reduced first-order model.
+We examine the interaction effect of the most significant cross-product predictor total sulfur dioxide with sulphates from our reduced first-order model.
 
 ```{r}
 # Categorize sulphates
@@ -325,10 +325,8 @@ wine$sulph.cat = "Low"
 wine$sulph.cat[sulphates.c > ss[2]] = "Medium-Low"
 wine$sulph.cat[sulphates.c > ss[3]] = "Medium"
 wine$sulph.cat[sulphates.c > ss[4]] = "High"
-
 plot(jitter(quality,1) ~ total_sulfur_dioxide.c, col=as.factor(wine$sulph.cat), xlab="Centered Total Sulphur Dioxide", ylab="Quality")
 legend(150, 8, c("Low", "Medium-Low", "Medium", "High"), pch=rep(1,4), col=1:4)
-
 # Low
 abline(lm(quality[wine$sulph.cat == "Low"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "Low"]), col=1)
 # Medium-Low
@@ -345,30 +343,127 @@ Another way to visualize the plot above:
 
 ```{r}
 par(mfrow=c(2,2))
-
 # Low
 plot(quality[wine$sulph.cat == "Low"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "Low"], col=c("black"), xlab="Total sulphur dioxide when sulphates are Low", ylab="Quality")
 legend(150, 4.5, c("Low"), pch=rep(1,4), col=1:4)
 abline(lm(quality[wine$sulph.cat == "Low"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "Low"]), col=1)
-
 # Medium-Low
 plot(quality[wine$sulph.cat == "Medium-Low"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "Medium-Low"], col=c("red"), xlab="Total sulphur dioxide when sulphates are Medium-Low", ylab="Quality")
 legend(50, 4.5, c("Medium-Low"), pch=rep(1,4), col=1:4)
 abline(lm(quality[wine$sulph.cat == "Medium-Low"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "Medium-Low"]), col=1)
-
 # Medium
 plot(quality[wine$sulph.cat == "Medium"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "Medium"], col=c("green"), xlab="Total sulphur dioxide when sulphates are Medium", ylab="Quality")
 legend(36, 8, c("Medium"), pch=rep(1,4), col=1:4)
 abline(lm(quality[wine$sulph.cat == "Medium"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "Medium"]), col=1)
-
 # High
 plot(quality[wine$sulph.cat == "High"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "High"], col=c("blue"), xlab="Total sulphur dioxide when sulphates are High", ylab="Quality")
 legend(70, 8, c("High"), pch=rep(1,4), col=1:4)
 abline(lm(quality[wine$sulph.cat == "High"] ~ total_sulfur_dioxide.c[wine$sulph.cat == "High"]), col=1)
-
 ```
 
 Although this plot relays the same information about the slopes of wine quality versus total sulphur dioxide by each sulphur level as the previous interaction plot displayed, it is easier to see each individual interaction effect as seperated by sulphur level.
+
+For the second most significant of three interaction effects:
+
+```{r}
+# Categorize sulphates
+# Obtain 1st quartile, median, and 3rd quartile
+ss = summary(total_sulfur_dioxide.c)
+ss
+```
+
+```{r}
+wine$total_sulph.cat = "Low"
+wine$total_sulph.cat[total_sulfur_dioxide.c > ss[2]] = "Medium-Low"
+wine$total_sulph.cat[total_sulfur_dioxide.c > ss[3]] = "Medium"
+wine$total_sulph.cat[total_sulfur_dioxide.c > ss[4]] = "High"
+plot(jitter(quality,1) ~ volatile_acidity.c, col=as.factor(wine$total_sulph.cat), xlab="Centered Volatile Acidity", ylab="Quality")
+legend(0.6, 7.5, c("Low", "Medium-Low", "Medium", "High"), pch=rep(1,4), col=1:4)
+# Low
+abline(lm(quality[wine$total_sulph.cat == "Low"] ~ volatile_acidity.c[wine$total_sulph.cat == "Low"]), col=1)
+# Medium-Low
+abline(lm(quality[wine$total_sulph.cat == "Medium-Low"] ~ volatile_acidity.c[wine$total_sulph.cat == "Medium-Low"]), col=2)
+# Medium
+abline(lm(quality[wine$total_sulph.cat == "Medium"] ~ volatile_acidity.c[wine$total_sulph.cat == "Medium"]), col=3)
+# High
+abline(lm(quality[wine$total_sulph.cat == "High"] ~ volatile_acidity.c[wine$total_sulph.cat == "High"]), col=4)
+```
+
+The interaction plot of Quality vs. Centered Volatile Acidity by Total Sulfur Dioxide level shows that wine quality decreases fastest with increasing total sulfur dioxide for the Low sulfur dioxide group. Additionally, wine quality decreases with increasing centered volatile acidity for the Medium-Low and Medium levels, but at slower rates than the Low group. Wine quality decreases the least quickly with volatile acidity for the High sulfur dioxide group.
+
+Another way to visualize the plot above: 
+
+```{r}
+par(mfrow=c(2,2))
+# Low
+plot(quality[wine$total_sulph.cat == "Low"] ~ volatile_acidity.c[wine$total_sulph.cat == "Low"], col=c("black"), xlab="Volatile acidity when total sulfur dioxide is Low", ylab="Quality")
+legend(0.6, 7.5, c("Low"), pch=rep(1,4), col=1:4)
+abline(lm(quality[wine$total_sulph.cat == "Low"] ~ volatile_acidity.c[wine$total_sulph.cat == "Low"]), col=1)
+# Medium-Low
+plot(quality[wine$total_sulph.cat == "Medium-Low"] ~ volatile_acidity.c[wine$total_sulph.cat == "Medium-Low"], col=c("red"), xlab="Volatile acidity when total sulfur dioxide is Medium-Low", ylab="Quality")
+legend(0.15, 7.5, c("Medium-Low"), pch=rep(1,4), col=1:4)
+abline(lm(quality[wine$total_sulph.cat == "Medium-Low"] ~ volatile_acidity.c[wine$total_sulph.cat == "Medium-Low"]), col=1)
+# Medium
+plot(quality[wine$total_sulph.cat == "Medium"] ~ volatile_acidity.c[wine$total_sulph.cat == "Medium"], col=c("green"), xlab="Volatile acidity when total sulfur dioxide is Medium", ylab="Quality")
+legend(0.3, 7.5, c("Medium"), pch=rep(1,4), col=1:4)
+abline(lm(quality[wine$total_sulph.cat == "Medium"] ~ volatile_acidity.c[wine$total_sulph.cat == "Medium"]), col=1)
+# High
+plot(quality[wine$total_sulph.cat == "High"] ~ volatile_acidity.c[wine$total_sulph.cat == "High"], col=c("blue"), xlab="Volatile acidity when total sulfur dioxide is High", ylab="Quality")
+legend(0.4, 7.5, c("High"), pch=rep(1,4), col=1:4)
+abline(lm(quality[wine$total_sulph.cat == "High"] ~ volatile_acidity.c[wine$total_sulph.cat == "High"]), col=1)
+```
+
+Although this plot relays the same information about the slopes of wine quality versus total sulphur dioxide by each sulphur level as the previous interaction plot displayed, it is easier to see each individual interaction effect as seperated by sulfur dioxide level.
+
+For the third most significant of three interaction effects:
+
+```{r}
+# Categorize sulphates
+# Obtain 1st quartile, median, and 3rd quartile
+ss = summary(alcohol.c)
+ss
+```
+
+```{r}
+wine$alcohol.cat = "Low"
+wine$alcohol.cat[alcohol.c > ss[2]] = "Medium-Low"
+wine$alcohol.cat[alcohol.c > ss[3]] = "Medium"
+wine$alcohol.cat[alcohol.c > ss[4]] = "High"
+plot(jitter(quality,1) ~ sulphates.c, col=as.factor(wine$alcohol.cat), xlab="Centered Sulphates", ylab="Quality")
+legend(0.9, 5, c("Low", "Medium-Low", "Medium", "High"), pch=rep(1,4), col=1:4)
+# Low
+abline(lm(quality[wine$alcohol.cat == "Low"] ~ sulphates.c[wine$alcohol.cat == "Low"]), col=1)
+# Medium-Low
+abline(lm(quality[wine$alcohol.cat == "Medium-Low"] ~ sulphates.c[wine$alcohol.cat == "Medium-Low"]), col=2)
+# Medium
+abline(lm(quality[wine$alcohol.cat == "Medium"] ~ sulphates.c[wine$alcohol.cat == "Medium"]), col=3)
+# High
+abline(lm(quality[wine$alcohol.cat == "High"] ~ sulphates.c[wine$alcohol.cat == "High"]), col=4)
+```
+
+The interaction plot of Quality vs. Centered Centered Sulphates by Alcohol level shows that wine quality increases fastest with increasing centered sulphates for the High alcohol group. Additionally, wine quality increases less quickly with increasing centered sulphates for the Medium, Medium-Low, and Low levels, respectively.
+
+```{r}
+par(mfrow=c(2,2))
+# Low
+plot(quality[wine$alcohol.cat == "Low"] ~ sulphates.c[wine$alcohol.cat == "Low"], col=c("black"), xlab="Sulphates when alcohol is Low", ylab="Quality")
+legend(1, 4.5, c("Low"), pch=rep(1,4), col=1:4)
+abline(lm(quality[wine$alcohol.cat == "Low"] ~ sulphates.c[wine$alcohol.cat == "Low"]), col=1)
+# Medium-Low
+plot(quality[wine$alcohol.cat == "Medium-Low"] ~ sulphates.c[wine$alcohol.cat == "Medium-Low"], col=c("red"), xlab="Sulphates when alcohol is Medium-Low", ylab="Quality")
+legend(0.45, 5.0, c("Medium-Low"), pch=rep(1,4), col=1:4)
+abline(lm(quality[wine$alcohol.cat == "Medium-Low"] ~ sulphates.c[wine$alcohol.cat == "Medium-Low"]), col=1)
+# Medium
+plot(quality[wine$alcohol.cat == "Medium"] ~ sulphates.c[wine$alcohol.cat == "Medium"], col=c("green"), xlab="Sulphates when alcohol is is Medium", ylab="Quality")
+legend(0.2, 5, c("Medium"), pch=rep(1,4), col=1:4)
+abline(lm(quality[wine$alcohol.cat == "Medium"] ~ sulphates.c[wine$alcohol.cat == "Medium"]), col=1)
+# High
+plot(quality[wine$alcohol.cat == "High"] ~ sulphates.c[wine$alcohol.cat == "High"], col=c("blue"), xlab="Sulphates when alcohol is High", ylab="Quality")
+legend(0.3, 4.7, c("High"), pch=rep(1,4), col=1:4)
+abline(lm(quality[wine$alcohol.cat == "High"] ~ sulphates.c[wine$alcohol.cat == "High"]), col=1)
+```
+
+Although this plot relays the same information about the slopes of wine quality versus total sulphur dioxide by each sulphur level as the previous interaction plot displayed, it is easier to see each individual interaction effect as seperated by sulfur dioxide level.
 
 ## Model Selection Methods: Both Directions Stepwise Regression with the SBC Criterion
 
@@ -576,14 +671,14 @@ We will now remove rows in the data set whose DFFits value was above 0.55 and de
 
 ```{r}
 wine.ex = wine[abs(wine$dffits) < .55,]
-plot(fit.sbc.final$fitted.values[-c(87, 92, 152, 653, 1080, 1082)], fit.final.ex$fitted.values, xlab="Final Model with Potential Influential Observations Removed", ylab="Final Model", main="Wine Quality of Final Model vs. Final Model with Removed Observations")
+fit.sbc.final.ex = lm (quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c, data=wine.ex)
+plot(fit.sbc.final$fitted.values[-c(87, 92, 152, 653, 1080, 1082)], fit.sbc.final.ex$fitted.values, xlab="Final Model with Potential Influential Observations Removed", ylab="Final Model", main="Wine Quality of Final Model vs. Final Model with Removed Observations")
 
 ```
 
 Judging from the plot of wine quality values from the final model versus the final model with the potentially influential observations removed, the line is very linear and suggests that the removal of these observations had no significant affect on the final model. 
 
 ```{r}
-fit.sbc.final.ex = lm (quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c, data=wine.ex)
 summary(fit.sbc.final.ex)
 
 ```
@@ -618,7 +713,9 @@ pred.table [c(900, 1300, 410, 575, 188, 462, 1587, 119, 1280, 888, 97, 1550),]
 
 The biggest takeaway from these predictions is that no matter the quality of wine, the model can predict the quality level for any given red wine variant with a precision of about 1.25 quality units.
 
-We note that every prediction fell within the confidence interval. 
+We note that every prediction fell within the confidence interval and that there doesn't appear to be a trend in the accuracy of predicting the qualtiy of red wine. That is, the accuracy of predicting red wine variants doesn't increase nor increase depending on the level of quality being predicted. 
+
+A quick sanity check to make sure that with repeated sampling, 95% of the time, our prediction for a red wine variant's quality level will fall within the 95% confidence limits of our regression line.
 
 ```{r}
 mean(pred.table$Lower <= pred.table$quality & pred.table$quality <= pred.table$Upper)
@@ -626,15 +723,17 @@ mean(pred.table$Lower <= pred.table$quality & pred.table$quality <= pred.table$U
 
 # Interpretation
 
-Wine quality decreases with each additional unit of volatile acidity, citric acid, log(chlorides), total sulfur dioxide, density, pH, and total sulphur dioxide x sulphates. The steepest negative slope is for density at -9.849. The other negative slopes range between -0.01 and -1.03. Conversely, quality increases with each additional unit of fixed acidity, log(residual sugar), free sulphur dioxide, sulphates, alochol, volatile acidity x total sulphur dioxide, and sulphates x alcohol. The steepest positive slope is sulphates at 1.195 while the other positive slopes lie between 0.004 and 0.360. 
+Wine quality decreases with each additional unit of volatile acidity, citric acid, log(chlorides), total sulfur dioxide, density, pH, and total sulphur dioxide with sulphates.
 
+Conversely, quality increases with each additional unit of fixed acidity, log(residual sugar), free sulphur dioxide, sulphates, alcohol, volatile acidity with total sulphur dioxide, and sulphates with alcohol. 
+ 
 The both directions stepwise regression model with the SBC criterion ended with the model:
-quality ~ volatile_acidity.c + citric_acid + log_chlorides + total_sulfur_dioxide.c + pH + sulphates.c + alcohol.c + volatile_acidity.c:total_sulfur_dioxide.c + total_sulfur_dioxide.c:sulphates.c + sulphates.c:alcohol.c. 
 
-All primary predictors in the model that are involved in an interaction effect are present in the model. Notably, the stepwise regression model decided to keep citric acid as a predictor which we ourselves removed while upon doing backwards elimination ourselves, as we did not find it significant. 
+Quality varies with centered volatile acidity, citric acid, log of chlorides, centered total sulfur dioxide, pH, centered sulphates, centered alcohol, centered volatile acidity with centered total sulfur dioxide, centered total sulfur dioxide with centered sulphates, and centered sulphates with centered alcohol.
 
-Though all the models output low adjusted $R^2$ values and relatively high residual standard error values, the stepwise model with the SBC criterion does have the hightest adjusted  value by 0.02 and the lowest residual standard eror by roughly 0.01. Due to these slight improvements the stepwise model has over the the other models we have gathered   
-@FINISH!!!!
+All primary predictors in the model that are involved in an interaction effect are present in the model. Notably, the stepwise regression model decided to keep citric acid as a predictor which we had removed while doing backwards elimination.
+
+Though all of our models had relatively low residual standard error values, they all had relatively low adjusted $R^2$ values and the stepwise model with the SBC criterion does have the hightest adjusted $R^2$ value by a small margin $R^2$ and the lowest residual standard eror. Due to these slight benefits the stepwise model has over the the other models we have gathered, we selected the stepwise model as our final model.
 
 # Conclusion
 
@@ -647,8 +746,10 @@ We have found that for red variants of the Portuguese “Vinho Verde” wine:
 5.	We concluded that there was no statistically significant difference between the transformed residual sugars and chlorides and the untransformed residual sugars and chlorides. The distributions of the predictor variable became more evenly distributed, but not more linear. 
 6.	The final model explained 38.3% of the variation in wine quality.
 7.	Prediction intervals of wine quality had margins of error equal to about +/- 1.25 quality units and 24% of the predicted values.
-8.  Three interaction effects are significant. The most significant interaction effect is volatile_acidity x total sulfur dioxide to a false-positive rate of α = .001. Total_sulfur_dioxide x sulphates and sulphates x alcohol are also significant interactions to a false-positive rate of α = .005.
+8.  Three interaction effects are significant. The most significant interaction effect is volatile_acidity x total sulfur dioxide to a false-positive rate of α = .001. Total sulfur dioxide x sulphates and sulphates x alcohol are also significant interactions to a false-positive rate of α = .005.
 
 
-Our dataset does not allow us to determine the labels associated with the wines, as no data about grape types, wine brands, wine selling prices, etc. are included. More information may also allow us to draw conclusions on the grape's region of origin, climate, and type. 
+In summation, there is no single predictor that precisely predicts the quality of red wine by itself; rather by combining many together with included interaction effects results in more accurately predicted red wine quality levels. We achieved a $R^2$ value of 0.383 in our final model using ten predictors including interaction effects with a residual standard error of 0.63.
+
+Our dataset does not allow us to determine the labels associated with the wines, as no data about grape types, wine brands, wine selling prices, etc. are included. More information may also allow us to draw conclusions on the grape's region of origin, climate, and type. Perhaps with these types of predictors, the quality of wine may be more accurately predicted. 
 
