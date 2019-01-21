@@ -1,6 +1,6 @@
 # Predicting Wine Quality of Red Variants of the Portuguese “Vinho Verde” Wine
 
-[Data set taken from Kaggle] (https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009 )
+[Data set taken from Kaggle](https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009)
 
 ## Abstract
 
@@ -18,7 +18,7 @@ The adjusted R^2 for this model is 0.3826. This is an improvement from our full-
 
 **Residuals**
 
-![alt text] (https://github.com/khummel01/WineQuality/tree/master/images/residuals.png "Residuals")
+![alt text](https://github.com/khummel01/WineQuality/blob/master/images/residuals.png "Residuals")
 
 The plot of residuals vs fitted values shows no major departures from the assumptions of constant variance, absence of outliers, and lack of curvature. The normal Q-Q plot shows that the data do not appear to be non-normal, except for a slight left skew. The Scale-Location plot indicates very non-constant variance. Because this plot indicates such strongly different conclusions from the other plots, we believe that the crook in the LOWESS line on the Scale-Location plot is due to the quasi-continuity of our response variable. There are no points with a leverage above the leverage cutoff, 25.3, and the Cook's distance cutoff is so far beyond the range of the data that it is not on the plot, so we are not concerned that any particular data point has too great an effect on the model. 
 
