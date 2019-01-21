@@ -1,4 +1,4 @@
-# Predicting Wine Quality of Red Variants of the Portuguese “Vinho Verde” Wine
+# Predicting Wine Quality of Red Variants of the Portuguese Wine
 
 [Data set taken from Kaggle](https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009)
 
